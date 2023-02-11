@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.data.models.person;
+package ph.jsalcedo.edumanager.utils.models.person;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;

@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.data.models.enums;
+package ph.jsalcedo.edumanager.utils.models.enums;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

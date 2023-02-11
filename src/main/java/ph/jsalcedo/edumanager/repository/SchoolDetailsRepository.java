@@ -1,8 +1,8 @@
-package ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails;
+package ph.jsalcedo.edumanager.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import ph.jsalcedo.edumanager.entity.SchoolDetails;
 
 import java.util.Optional;
 
@@ -11,6 +11,7 @@ public interface SchoolDetailsRepository extends JpaRepository<SchoolDetails, Lo
 
 
     Optional<SchoolDetails> findBySchoolName(String schoolName);
+
 
 
 }

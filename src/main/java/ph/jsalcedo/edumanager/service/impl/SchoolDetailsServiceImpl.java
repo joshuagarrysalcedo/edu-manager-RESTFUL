@@ -1,8 +1,12 @@
-package ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails;
+package ph.jsalcedo.edumanager.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ph.jsalcedo.edumanager.data.models.person.Address;
+import ph.jsalcedo.edumanager.repository.SchoolDetailsRepository;
+import ph.jsalcedo.edumanager.service.SchoolDetailsService;
+import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
+import ph.jsalcedo.edumanager.utils.models.person.Address;
+import ph.jsalcedo.edumanager.entity.SchoolDetails;
 
 import java.util.Date;
 import java.util.List;
@@ -10,14 +14,14 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class SchoolDetailsDaoImpl implements SchoolDetailsDao{
+public class SchoolDetailsServiceImpl implements SchoolDetailsService {
     private final SchoolDetailsRepository schoolDetailsRepository;
     @Override
     public void addSchoolDetails(SchoolDetails schoolDetails) {
-        if(!doesItExists(schoolDetails)){
-            schoolDetailsRepository.save(schoolDetails);
+        if(doesItExists(schoolDetails)){
+            throw new IllegalStateException(ErrorMessage.Constants.ADDING_SCHOOL_DETAILS_MESSAGE);
         }
-
+        schoolDetailsRepository.save(schoolDetails);
     }
 
     private boolean doesItExists(SchoolDetails schoolDetails) {
@@ -94,6 +98,11 @@ public class SchoolDetailsDaoImpl implements SchoolDetailsDao{
     public void updateEmployeeIDPattern(SchoolDetails schoolDetails, String newPattern) {
         schoolDetails.setEmployeeIDPattern(newPattern);
         schoolDetailsRepository.save(schoolDetails);
+    }
+
+    @Override
+    public void deleteAll() {
+        schoolDetailsRepository.deleteAll();
     }
 
 

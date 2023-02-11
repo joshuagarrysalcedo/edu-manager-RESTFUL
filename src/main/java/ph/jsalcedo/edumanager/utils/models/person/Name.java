@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.data.models.person;
+package ph.jsalcedo.edumanager.utils.models.person;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

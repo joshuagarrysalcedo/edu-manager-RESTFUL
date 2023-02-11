@@ -1,12 +1,12 @@
-package ph.jsalcedo.edumanager.api.student.application;
+package ph.jsalcedo.edumanager.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ph.jsalcedo.edumanager.data.models.entity.student.Student;
-import ph.jsalcedo.edumanager.data.models.entity.student.StudentService;
+import ph.jsalcedo.edumanager.entity.Student;
+import ph.jsalcedo.edumanager.utils.models.entity.student.StudentService;
 
 import java.util.List;
 

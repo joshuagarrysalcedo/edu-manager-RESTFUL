@@ -1,16 +1,20 @@
-package ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails;
+package ph.jsalcedo.edumanager.service;
 
 
 import org.springframework.transaction.annotation.Transactional;
-import ph.jsalcedo.edumanager.data.models.person.Address;
+import ph.jsalcedo.edumanager.utils.models.person.Address;
+import ph.jsalcedo.edumanager.entity.SchoolDetails;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface SchoolDetailsDao {
+public interface SchoolDetailsService {
+    @Transactional
     void addSchoolDetails(SchoolDetails schoolDetails);
+    @Transactional
     void deleteSchoolDetails(SchoolDetails schoolDetails);
+    @Transactional
     void updateSchoolName(SchoolDetails schoolDetails, String newName);
 
     Optional<SchoolDetails> findSchoolDetails(String name);
@@ -29,4 +33,7 @@ public interface SchoolDetailsDao {
     void updateStudentIDPattern(SchoolDetails schoolDetails, String newSchoolIDPattern);
     @Transactional
     void updateEmployeeIDPattern(SchoolDetails schoolDetails, String newPattern);
+
+    @Transactional
+    void deleteAll();
 }

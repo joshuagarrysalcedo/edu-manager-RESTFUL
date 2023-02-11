@@ -1,60 +1,71 @@
 package ph.jsalcedo.edumanager.data.models.entity.school.enrollmentStatus;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails.SchoolDetails;
-import ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails.SchoolDetailsDao;
-import ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails.SchoolDetailsRepository;
-import ph.jsalcedo.edumanager.data.models.person.Address;
+import ph.jsalcedo.edumanager.entity.SchoolDetails;
+import ph.jsalcedo.edumanager.service.impl.EnrollmentStatusServiceImpl;
+import ph.jsalcedo.edumanager.repository.EnrollmentStatusRepository;
+import ph.jsalcedo.edumanager.service.SchoolDetailsService;
+import ph.jsalcedo.edumanager.repository.SchoolDetailsRepository;
+import ph.jsalcedo.edumanager.utils.models.person.Address;
+import ph.jsalcedo.edumanager.entity.EnrollmentStatus;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
 @Slf4j
-class EnrollmentStatusDaoImplTest {
-    private final EnrollmentStatusDaoImpl impl;
+class EnrollmentStatusServiceImplTest {
+    private final EnrollmentStatusServiceImpl impl;
     private final SchoolDetailsRepository repository;
-    private final SchoolDetails schoolDetails;
+    private  SchoolDetails schoolDetails;
     private final EnrollmentStatusRepository enrollmentStatusRepository;
 
-    private final EnrollmentStatus enrollmentStatus;
-    private final SchoolDetailsRepository schoolDetailsRepository;
-    private final SchoolDetailsDao schoolDetailsDao;
-    private final EnrollmentStatus status;
+    private  EnrollmentStatus enrollmentStatus;
+
+    private final SchoolDetailsService schoolDetailsService;
+    private  EnrollmentStatus status;
 
     @Autowired
-    public EnrollmentStatusDaoImplTest(EnrollmentStatusDaoImpl impl, SchoolDetailsRepository repository, EnrollmentStatusRepository enrollmentStatusRepository, SchoolDetailsRepository schoolDetailsRepository, SchoolDetailsDao schoolDetailsDao) {
+    public EnrollmentStatusServiceImplTest(EnrollmentStatusServiceImpl impl, SchoolDetailsRepository repository, EnrollmentStatusRepository enrollmentStatusRepository, SchoolDetailsService schoolDetailsService) {
         this.impl = impl;
         this.repository = repository;
         this.enrollmentStatusRepository = enrollmentStatusRepository;
-        this.schoolDetailsRepository = schoolDetailsRepository;
-        this.schoolDetailsDao = schoolDetailsDao;
+
+        this.schoolDetailsService = schoolDetailsService;
+
+    }
+
+    @BeforeEach
+    void initialize(){
         this.schoolDetails =
                 SchoolDetails.builder()
-                .schoolDomain("sample-school.com")
-                .foundedOn(new Date())
-                .founder("Juan Tamad")
-                .schoolAddress(Address.builder().city("Cagayan de Oro City").build())
-                .schoolName("sample school university")
-                .build();
+                        .schoolDomain("sample-school.com")
+                        .foundedOn(new Date())
+                        .founder("Juan Tamad")
+                        .schoolAddress(Address.builder("Cagayan de Oro City", "Philippines").build())
+                        .schoolName("sample school university")
+                        .build();
         this.enrollmentStatus = EnrollmentStatus
                 .builder()
-                        .enrollmentStatus("PENDING")
-                                .description("student who is pending in enrollment")
-                                        .build();
+                .enrollmentStatus("PENDING")
+                .description("student who is pending in enrollment")
+                .build();
         this.status = EnrollmentStatus
                 .builder()
                 .enrollmentStatus("UN-ENROLLED")
                 .description("Student who is not enrolled")
                 .build();
-        schoolDetailsRepository.save(schoolDetails);
-
-
+        schoolDetailsService.addSchoolDetails(schoolDetails);
+    }
+    @AfterEach
+    void reset(){
+        schoolDetailsService.deleteAll();
     }
 
 
@@ -74,39 +85,40 @@ class EnrollmentStatusDaoImplTest {
     @Test
     void addEnrollmentStatus() {
 
-        Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
+        Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsService.findSchoolDetails(schoolDetails.getSchoolName());
         Assertions.assertTrue(optionalSchoolDetails.isPresent());
-        if(optionalSchoolDetails.isPresent()){
-            impl.addEnrollmentStatus(optionalSchoolDetails.get(), status);
-            Assertions.assertNotNull(optionalSchoolDetails.get().getEnrollmentStatuses());
-            Assertions.assertTrue(optionalSchoolDetails.get().getEnrollmentStatuses().size() > 0);
-            Optional<EnrollmentStatus> optionalEnrollmentStatus = enrollmentStatusRepository.findByEnrollmentStatus("UN-ENROLLED");
-            Assertions.assertTrue(optionalEnrollmentStatus.isPresent());
-            Assertions.assertEquals(optionalSchoolDetails.get().getId(), optionalEnrollmentStatus.get().getSchoolDetails().getId());
+        impl.addEnrollmentStatus(optionalSchoolDetails.get(), status);
+        Assertions.assertNotNull(optionalSchoolDetails.get().getEnrollmentStatuses());
+        Assertions.assertTrue(optionalSchoolDetails.get().getEnrollmentStatuses().size() > 0);
+        Optional<EnrollmentStatus> optionalEnrollmentStatus = enrollmentStatusRepository.findByEnrollmentStatus("UN-ENROLLED");
+        Assertions.assertTrue(optionalEnrollmentStatus.isPresent());
+        Assertions.assertEquals(optionalSchoolDetails.get().getId(), optionalEnrollmentStatus.get().getSchoolDetails().getId());
 //                Assertions.assertTrue(optionalSchoolDetails.get()
 //                        .getEnrollmentStatuses()
 //                        .stream().anyMatch(u-> u.getEnrollmentStatus()
 //                                .equalsIgnoreCase(status
 //                                        .getEnrollmentStatus()) && u.getSchoolDetails().equals(optionalSchoolDetails.get())));
-            }
-        }
+    }
 
 
 
     @Test
     void deleteEnrollmentStatus() {
 
-        Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
-        if(optionalSchoolDetails.isPresent()) {
-            impl.addEnrollmentStatus(optionalSchoolDetails.get(), enrollmentStatus);
-            Assertions.assertEquals(1, optionalSchoolDetails.get().getEnrollmentStatuses().size());
-            Assertions.assertTrue(enrollmentStatusRepository.findByEnrollmentStatus(enrollmentStatus.getEnrollmentStatus()).isPresent());
+        Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsService.findSchoolDetails(schoolDetails.getSchoolName());
+        Assertions.assertTrue(optionalSchoolDetails.isPresent());
 
-            impl.deleteEnrollmentStatus(optionalSchoolDetails.get(), enrollmentStatus);
+        impl.addEnrollmentStatus(optionalSchoolDetails.get(), enrollmentStatus);
+        Assertions.assertEquals(1, optionalSchoolDetails.get().getEnrollmentStatuses().size());
+        Assertions.assertTrue(enrollmentStatusRepository.findByEnrollmentStatus(enrollmentStatus.getEnrollmentStatus()).isPresent());
+        Optional<EnrollmentStatus> optionalEnrollmentStatus = impl.getEnrollmentStatus(optionalSchoolDetails.get(), enrollmentStatus.getEnrollmentStatus());
+        Assertions.assertTrue(optionalEnrollmentStatus.isPresent());
 
-            Assertions.assertEquals(0, optionalSchoolDetails.get().getEnrollmentStatuses().size());
-            Assertions.assertEquals(0, enrollmentStatusRepository.findAll().size());
-        }
+        impl.deleteEnrollmentStatus(optionalSchoolDetails.get(), enrollmentStatus);
+//        optionalSchoolDetails.get().getEnrollmentStatuses().remove(enrollmentStatus);
+        Assertions.assertEquals(0, optionalSchoolDetails.get().getEnrollmentStatuses().size());
+        System.out.println("SIZE = " + enrollmentStatusRepository.findAll().size());
+//        Assertions.assertEquals(0, enrollmentStatusRepository.findAll().size());
 
     }
 

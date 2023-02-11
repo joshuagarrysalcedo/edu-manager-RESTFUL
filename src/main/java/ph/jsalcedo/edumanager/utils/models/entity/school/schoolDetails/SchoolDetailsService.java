@@ -1,15 +1,7 @@
-package ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails;
+package ph.jsalcedo.edumanager.utils.models.entity.school.schoolDetails;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ph.jsalcedo.edumanager.data.models.entity.school.enrollmentStatus.EnrollmentStatus;
-import ph.jsalcedo.edumanager.data.models.entity.school.enrollmentStatus.EnrollmentStatusService;
-import ph.jsalcedo.edumanager.utils.StringFormatter;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor

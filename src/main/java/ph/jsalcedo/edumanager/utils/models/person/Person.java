@@ -11,24 +11,21 @@
 
 
 
-package ph.jsalcedo.edumanager.data.models.person;
+package ph.jsalcedo.edumanager.utils.models.person;
 
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import ph.jsalcedo.edumanager.data.models.enums.Gender;
-import ph.jsalcedo.edumanager.data.models.enums.MaritalStatus;
-import ph.jsalcedo.edumanager.data.models.enums.Nationality;
+import ph.jsalcedo.edumanager.utils.models.enums.Gender;
+import ph.jsalcedo.edumanager.utils.models.enums.MaritalStatus;
+import ph.jsalcedo.edumanager.utils.models.enums.Nationality;
 
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter

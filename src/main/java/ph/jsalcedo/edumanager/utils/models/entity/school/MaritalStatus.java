@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.data.models.entity.school;
+package ph.jsalcedo.edumanager.utils.models.entity.school;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.SchoolDetails;
 
 @Entity
 @Table

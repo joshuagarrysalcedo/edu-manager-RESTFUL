@@ -1,47 +1,86 @@
 package ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails;
 
-import jakarta.validation.constraints.AssertTrue;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ph.jsalcedo.edumanager.data.models.person.Address;
+import ph.jsalcedo.edumanager.service.SchoolDetailsService;
+import ph.jsalcedo.edumanager.repository.SchoolDetailsRepository;
+import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
+import ph.jsalcedo.edumanager.utils.models.person.Address;
+import ph.jsalcedo.edumanager.entity.SchoolDetails;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
-class SchoolDetailsDaoImplTest {
+class SchoolDetailsServiceImplTest {
 
-    private final SchoolDetailsDao schoolDetailsDao;
+    private final SchoolDetailsService schoolDetailsService;
     private final SchoolDetailsRepository schoolDetailsRepository;
     private SchoolDetails schoolDetails;
-
-    @Autowired
-    public SchoolDetailsDaoImplTest(SchoolDetailsDao schoolDetailsDao, SchoolDetailsRepository schoolDetailsRepository) {
-        this.schoolDetailsDao = schoolDetailsDao;
-        this.schoolDetailsRepository = schoolDetailsRepository;
-
+    @BeforeEach
+    void initialize(){
         this.schoolDetails = SchoolDetails.builder()
                 .schoolDomain("sample-school.com")
                 .foundedOn(new Date())
                 .founder("Juan Tamad")
-                .schoolAddress(Address.builder().city("Cagayan de Oro City").build())
+                .schoolAddress(Address.builder("Cagayan de Oro City", "Phillines").build())
                 .schoolName("sample school university")
                 .build();
-        schoolDetailsDao.addSchoolDetails(schoolDetails);
+        schoolDetailsService.addSchoolDetails(schoolDetails);
+    }
+    @AfterEach
+    void reset(){
+        schoolDetailsService.deleteAll();
+    }
+    @Autowired
+    public SchoolDetailsServiceImplTest(SchoolDetailsService schoolDetailsService, SchoolDetailsRepository schoolDetailsRepository) {
+        this.schoolDetailsService = schoolDetailsService;
+        this.schoolDetailsRepository = schoolDetailsRepository;
+
+
     }
 
 
     @Test
     void addSchoolDetails() {
+        SchoolDetails duplicateName = SchoolDetails.builder().schoolName("sample school university").build();
+        SchoolDetails duplicateDomain = SchoolDetails
+                .builder()
+                .schoolName("duplicate domain school")
+                .schoolDomain("sample-school.com")
+                .build();
+        SchoolDetails duplicateDetails = SchoolDetails
+                .builder()
+                .schoolName("sample school university")
+                .schoolDomain("sample-school.com")
+                .build();
 
+        Exception duplicateNameException = Assertions.assertThrows(IllegalStateException.class, ()->{
+            schoolDetailsService.addSchoolDetails(duplicateName);
+        });
+
+        Exception duplicateDomainException = Assertions.assertThrows(IllegalStateException.class, ()->{
+            schoolDetailsService.addSchoolDetails(duplicateDomain);
+        });
+
+        Exception duplicateDetailsException = Assertions.assertThrows(IllegalStateException.class, ()->{
+            schoolDetailsService.addSchoolDetails(duplicateDetails);
+        });
+        String duplicateNameErrorMessageResult = duplicateNameException.getMessage();
+        String duplicateDomainErrorMessageResult = duplicateDomainException.getMessage();
+        String duplicateDetailsErrorMessageResult = duplicateDetailsException.getMessage();
+        String expectedErrorMessage = ErrorMessage.Constants.ADDING_SCHOOL_DETAILS_MESSAGE;
+
+        Assertions.assertEquals(duplicateNameErrorMessageResult, expectedErrorMessage);
+        Assertions.assertEquals(duplicateDomainErrorMessageResult, expectedErrorMessage);
+        Assertions.assertEquals(duplicateDetailsErrorMessageResult, expectedErrorMessage);
         Assertions.assertTrue(schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName()).isPresent());
     }
 
@@ -49,7 +88,7 @@ class SchoolDetailsDaoImplTest {
     void deleteSchoolDetails() {
         Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
         if (optionalSchoolDetails.isPresent()) {
-            schoolDetailsDao.deleteSchoolDetails(optionalSchoolDetails.get());
+            schoolDetailsService.deleteSchoolDetails(optionalSchoolDetails.get());
             Assertions.assertFalse(schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName()).isPresent());
             schoolDetailsRepository.save(schoolDetails);
         }
@@ -61,8 +100,8 @@ class SchoolDetailsDaoImplTest {
     @Test
     void findSchoolDetails() {
 
-        Optional<SchoolDetails> id = schoolDetailsDao.findSchoolDetails(1L);
-        Optional<SchoolDetails> name = schoolDetailsDao.findSchoolDetails("sample school university");
+        Optional<SchoolDetails> id = schoolDetailsService.findSchoolDetails(schoolDetails.getId());
+        Optional<SchoolDetails> name = schoolDetailsService.findSchoolDetails("sample school university");
         Assertions.assertTrue(id.isPresent());
         Assertions.assertTrue(name.isPresent());
 
@@ -72,7 +111,7 @@ class SchoolDetailsDaoImplTest {
 
     @Test
     void getAllSchoolDetails() {
-        List<SchoolDetails> schoolDetailsList = schoolDetailsDao.getAllSchoolDetails();
+        List<SchoolDetails> schoolDetailsList = schoolDetailsService.getAllSchoolDetails();
         System.out.println("Count: " + schoolDetailsList.size());
         Assertions.assertTrue(schoolDetailsList.size() > 0);
     }
@@ -82,9 +121,9 @@ class SchoolDetailsDaoImplTest {
         String newName = "CITY CENTRAL";
         Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
         if (optionalSchoolDetails.isPresent()) {
-            schoolDetailsDao.updateSchoolName(optionalSchoolDetails.get(), newName);
+            schoolDetailsService.updateSchoolName(optionalSchoolDetails.get(), newName);
             Assertions.assertEquals(optionalSchoolDetails.get().getSchoolName(), newName);
-            schoolDetailsDao.updateSchoolName(optionalSchoolDetails.get(), "sample school university");
+            schoolDetailsService.updateSchoolName(optionalSchoolDetails.get(), "sample school university");
         }
 
 
@@ -97,7 +136,7 @@ class SchoolDetailsDaoImplTest {
         String newDomain = "CityCentralSchool.com";
         Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
         if (optionalSchoolDetails.isPresent()) {
-            schoolDetailsDao.updateSchoolDomain(optionalSchoolDetails.get(), newDomain );
+            schoolDetailsService.updateSchoolDomain(optionalSchoolDetails.get(), newDomain );
             Assertions.assertEquals(optionalSchoolDetails.get().getSchoolDomain(), newDomain);
         }
 
@@ -110,7 +149,7 @@ class SchoolDetailsDaoImplTest {
         Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
 
         if (optionalSchoolDetails.isPresent()) {
-            schoolDetailsDao.updateFounder(optionalSchoolDetails.get(), newFounder );
+            schoolDetailsService.updateFounder(optionalSchoolDetails.get(), newFounder );
             Assertions.assertEquals(optionalSchoolDetails.get().getFounder(), newFounder);
         }
 
@@ -126,7 +165,7 @@ class SchoolDetailsDaoImplTest {
         Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
 
         if (optionalSchoolDetails.isPresent()) {
-            schoolDetailsDao.updateFounderOn(optionalSchoolDetails.get(), newFoundedOn );
+            schoolDetailsService.updateFounderOn(optionalSchoolDetails.get(), newFoundedOn );
             Assertions.assertEquals(optionalSchoolDetails.get().getFoundedOn(), newFoundedOn);
         }
 
@@ -135,11 +174,11 @@ class SchoolDetailsDaoImplTest {
 
     @Test
     void updateSchoolAddress(){
-        Address address = Address.builder().city("Cagayan de Oro City").country("Philippines").build();
+        Address address = Address.builder("Davao City","Philippines" ).build();
         Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
 
         if (optionalSchoolDetails.isPresent()) {
-            schoolDetailsDao.updateAddress(optionalSchoolDetails.get(), address );
+            schoolDetailsService.updateAddress(optionalSchoolDetails.get(), address );
             Assertions.assertEquals(optionalSchoolDetails.get().getSchoolAddress(), address);
         }
 
@@ -152,7 +191,7 @@ class SchoolDetailsDaoImplTest {
         Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
 
         if (optionalSchoolDetails.isPresent()) {
-            schoolDetailsDao.updateStudentIDPattern(optionalSchoolDetails.get(), newSchoolIDPattern );
+            schoolDetailsService.updateStudentIDPattern(optionalSchoolDetails.get(), newSchoolIDPattern );
             Assertions.assertEquals(optionalSchoolDetails.get().getStudentIDPattern(), newSchoolIDPattern);
         }
 
@@ -165,7 +204,7 @@ class SchoolDetailsDaoImplTest {
         Optional<SchoolDetails> optionalSchoolDetails = schoolDetailsRepository.findBySchoolName(schoolDetails.getSchoolName());
 
         if (optionalSchoolDetails.isPresent()) {
-            schoolDetailsDao.updateEmployeeIDPattern(optionalSchoolDetails.get(), newPattern );
+            schoolDetailsService.updateEmployeeIDPattern(optionalSchoolDetails.get(), newPattern );
             Assertions.assertEquals(optionalSchoolDetails.get().getEmployeeIDPattern(), newPattern);
         }
         Assertions.assertTrue(optionalSchoolDetails.isPresent());

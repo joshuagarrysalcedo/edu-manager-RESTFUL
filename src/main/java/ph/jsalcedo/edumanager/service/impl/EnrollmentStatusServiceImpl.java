@@ -1,17 +1,20 @@
-package ph.jsalcedo.edumanager.data.models.entity.school.enrollmentStatus;
+package ph.jsalcedo.edumanager.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails.SchoolDetails;
-import ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails.SchoolDetailsRepository;
+import ph.jsalcedo.edumanager.entity.SchoolDetails;
+import ph.jsalcedo.edumanager.repository.EnrollmentStatusRepository;
+import ph.jsalcedo.edumanager.repository.SchoolDetailsRepository;
+import ph.jsalcedo.edumanager.entity.EnrollmentStatus;
+import ph.jsalcedo.edumanager.service.EnrollmentStatusService;
+import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
 @AllArgsConstructor
-public class EnrollmentStatusDaoImpl implements EnrollmentStatusDao{
+public class EnrollmentStatusServiceImpl implements EnrollmentStatusService {
     private final EnrollmentStatusRepository enrollmentStatusRepository;
     private final SchoolDetailsRepository schoolDetailsRepository;
 
@@ -37,33 +40,49 @@ public class EnrollmentStatusDaoImpl implements EnrollmentStatusDao{
 //                    .getEnrollmentStatuses()
 //                    .stream()
 //                    .noneMatch(u-> u.getEnrollmentStatus().equalsIgnoreCase(enrollmentStatus.getEnrollmentStatus()))){
-        if(schoolDetails.getEnrollmentStatuses().stream().noneMatch(u-> u.getEnrollmentStatus().equalsIgnoreCase(enrollmentStatus.getEnrollmentStatus()))){
-            enrollmentStatus.setSchoolDetails(schoolDetails);
-            schoolDetails.getEnrollmentStatuses().add(enrollmentStatus);
-
+        if(schoolDetails.getEnrollmentStatuses().stream().anyMatch(u-> u.getEnrollmentStatus().equalsIgnoreCase(enrollmentStatus.getEnrollmentStatus()))){
+            throw new IllegalStateException(ErrorMessage.Constants.NOT_FOUND_MESSAGE);
+        }
+        enrollmentStatus.setSchoolDetails(schoolDetails);
+        schoolDetails.getEnrollmentStatuses().add(enrollmentStatus);
+        schoolDetailsRepository.save(schoolDetails);
 //                enrollmentStatusRepository.saveAll(schoolDetails.getEnrollmentStatuses());
 //               enrollmentStatusRepository.save(enrollmentStatus);
-            schoolDetailsRepository.save(schoolDetails);
-        }else{
-            throw new IllegalStateException("Enrollment status not found");
-        }
 
             }
 
 
     @Override
     public void deleteEnrollmentStatus(SchoolDetails schoolDetails, EnrollmentStatus enrollmentStatus) {
-        if(schoolDetails.getEnrollmentStatuses().stream().anyMatch(u-> u.getEnrollmentStatus().equals(enrollmentStatus.getEnrollmentStatus()))){
-           schoolDetails.getEnrollmentStatuses().remove(enrollmentStatus);
-           schoolDetailsRepository.save(schoolDetails);
-           enrollmentStatusRepository.deleteById(enrollmentStatus.getId());
+        if(schoolDetails.getEnrollmentStatuses().stream().noneMatch(u-> u.getEnrollmentStatus().equalsIgnoreCase(enrollmentStatus.getEnrollmentStatus()))){
+            throw new IllegalStateException(ErrorMessage.Constants.NOT_FOUND_MESSAGE);
         }
-
+//      schoolDetails.getEnrollmentStatuses().stream()
+//              .filter(u->u.getEnrollmentStatus().equalsIgnoreCase(enrollmentStatus.getEnrollmentStatus()))
+//              .forEach(u-> {
+//                  schoolDetails.getEnrollmentStatuses().remove(u);
+//              });
+//       schoolDetailsRepository.save(schoolDetails);
+//        enrollmentStatusRepository.deleteByEnrollmentStatusAndSchoolDetails(enrollmentStatus.getEnrollmentStatus(), schoolDetails);
+//        schoolDetails.getEnrollmentStatuses().remove(enrollmentStatus);
+//        schoolDetails.getEnrollmentStatuses().removeIf(u-> u.getEnrollmentStatus().equalsIgnoreCase(enrollmentStatus.getEnrollmentStatus()));
+        schoolDetails.getEnrollmentStatuses().remove(enrollmentStatus);
+//        System.out.println("Size " + schoolDetails.getEnrollmentStatuses().size());
+        schoolDetails.getEnrollmentStatuses().forEach(e-> System.out.println(e.getEnrollmentStatus()));
+        enrollmentStatus.setSchoolDetails(null);
+//        enrollmentStatusRepository.deleteById(enrollmentStatus.getId());
+        enrollmentStatusRepository.delete(enrollmentStatus);
+//        schoolDetailsRepository.save(schoolDetails);
     }
 
     @Override
-    public EnrollmentStatus getEnrollmentStatus(SchoolDetails schoolDetails, String statusName) {
-        return null;
+    public void deleteByID(Long id) {
+        enrollmentStatusRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<EnrollmentStatus> getEnrollmentStatus(SchoolDetails schoolDetails, String statusName) {
+        return enrollmentStatusRepository.findEnrollmentStatusByEnrollmentStatusAndSchoolDetails(statusName,schoolDetails);
     }
 
     @Override

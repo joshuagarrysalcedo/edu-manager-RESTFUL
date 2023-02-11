@@ -1,14 +1,12 @@
-package ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails;
+package ph.jsalcedo.edumanager.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
-import ph.jsalcedo.edumanager.data.models.entity.school.enrollmentStatus.EnrollmentStatus;
-import ph.jsalcedo.edumanager.data.models.person.Address;
-import ph.jsalcedo.edumanager.utils.StringFormatter;
+import ph.jsalcedo.edumanager.entity.EnrollmentStatus;
+import ph.jsalcedo.edumanager.utils.models.person.Address;
 
 import java.util.*;
 
@@ -44,7 +42,7 @@ public class SchoolDetails {
     private String schoolDomain;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "schoolDetails", targetEntity = EnrollmentStatus.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "schoolDetails", targetEntity = EnrollmentStatus.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     private  Set<EnrollmentStatus> enrollmentStatuses = new HashSet<>();
 
 
@@ -86,6 +84,8 @@ public class SchoolDetails {
         this.schoolDomain = schoolDomain;
         this.enrollmentStatuses = enrollmentStatuses;
     }
+
+
 
 
 }

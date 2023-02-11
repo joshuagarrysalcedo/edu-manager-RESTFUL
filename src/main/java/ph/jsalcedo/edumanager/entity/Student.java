@@ -1,15 +1,13 @@
-package ph.jsalcedo.edumanager.data.models.entity.student;
+package ph.jsalcedo.edumanager.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import ph.jsalcedo.edumanager.data.models.enums.Student_Status;
-import ph.jsalcedo.edumanager.data.models.person.Person;
+import ph.jsalcedo.edumanager.utils.models.enums.Student_Status;
+import ph.jsalcedo.edumanager.utils.models.person.Person;
 
 
-import java.util.Date;
 import java.util.UUID;
 @Getter
 @ToString

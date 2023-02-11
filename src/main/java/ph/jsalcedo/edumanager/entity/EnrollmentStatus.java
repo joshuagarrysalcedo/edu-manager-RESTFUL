@@ -1,12 +1,10 @@
-package ph.jsalcedo.edumanager.data.models.entity.school.enrollmentStatus;
+package ph.jsalcedo.edumanager.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ph.jsalcedo.edumanager.data.models.entity.school.schoolDetails.SchoolDetails;
 
 @Entity
 @Table
@@ -32,7 +30,7 @@ public class EnrollmentStatus {
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = SchoolDetails.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "schoolDetails_id", referencedColumnName = "id")
+    @JoinColumn(name = "schoolDetails_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private SchoolDetails schoolDetails;
