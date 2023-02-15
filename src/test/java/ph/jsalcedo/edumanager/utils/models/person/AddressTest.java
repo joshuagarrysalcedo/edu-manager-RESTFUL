@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ph.jsalcedo.edumanager.entity.student.Student;
-import ph.jsalcedo.edumanager.repository.StudentRepository;
+import ph.jsalcedo.edumanager.entity.student.StudentRepository;
 import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
 
 @SpringBootTest

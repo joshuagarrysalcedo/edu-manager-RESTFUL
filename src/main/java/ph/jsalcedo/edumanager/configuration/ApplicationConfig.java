@@ -2,10 +2,13 @@ package ph.jsalcedo.edumanager.configuration;
 
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,15 +17,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.thymeleaf.spring6.SpringTemplateEngine;
-import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.templatemode.TemplateMode;
-import ph.jsalcedo.edumanager.controller.auth.AuthenticationRequest;
-import ph.jsalcedo.edumanager.controller.auth.AuthenticationService;
-import ph.jsalcedo.edumanager.controller.auth.RegisterRequest;
-import ph.jsalcedo.edumanager.entity.appuser.AppUser;
-import ph.jsalcedo.edumanager.repository.AppUserRepository;
-import ph.jsalcedo.edumanager.service.AppUserService;
+import ph.jsalcedo.edumanager.entity.auth.AuthenticationService;
+import ph.jsalcedo.edumanager.entity.auth.RegisterRequest;
+import ph.jsalcedo.edumanager.entity.appuser.AppUserRepository;
+import ph.jsalcedo.edumanager.entity.appuser.AppUserService;
+import ph.jsalcedo.edumanager.entity.institution.InstitutionService;
 import ph.jsalcedo.edumanager.utils.models.enums.AppUserRole;
 import ph.jsalcedo.edumanager.utils.models.person.Name;
 
@@ -95,4 +94,7 @@ public class ApplicationConfig {
     public Random random(){
         return new Random();
     }
+
+
+
 }

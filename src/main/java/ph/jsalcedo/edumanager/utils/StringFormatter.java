@@ -13,4 +13,6 @@ public class StringFormatter {
         titleCase.trimToSize();
         return titleCase.toString();
     }
+
+
 }

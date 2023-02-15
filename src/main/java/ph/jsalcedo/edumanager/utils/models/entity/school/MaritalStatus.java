@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ph.jsalcedo.edumanager.entity.school.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.school.schooldetails.SchoolDetails;
 
 @Entity
 @Table

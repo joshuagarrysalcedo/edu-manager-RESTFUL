@@ -3,7 +3,7 @@ package ph.jsalcedo.edumanager.utils.models.entity.student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ph.jsalcedo.edumanager.entity.student.Student;
-import ph.jsalcedo.edumanager.repository.StudentRepository;
+import ph.jsalcedo.edumanager.entity.student.StudentRepository;
 
 import java.util.List;
 

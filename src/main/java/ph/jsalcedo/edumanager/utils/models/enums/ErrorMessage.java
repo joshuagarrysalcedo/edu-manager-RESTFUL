@@ -17,6 +17,8 @@ public enum ErrorMessage {
         public static final String ADDING_SCHOOL_DETAILS_MESSAGE = "school name or school domain already exists!";
         public static final String EMPTY_FIELD_REQUIRED_MESSAGE = "field must not be blank!";
         public static final String NOT_FOUND_MESSAGE = "field not found";
+
+        public static final String INVALID_NAME = "Invalid name!";
     }
 
 
