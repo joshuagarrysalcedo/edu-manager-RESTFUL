@@ -7,13 +7,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ph.jsalcedo.edumanager.entity.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.school.SchoolDetails;
 import ph.jsalcedo.edumanager.service.impl.EnrollmentStatusServiceImpl;
 import ph.jsalcedo.edumanager.repository.EnrollmentStatusRepository;
 import ph.jsalcedo.edumanager.service.SchoolDetailsService;
 import ph.jsalcedo.edumanager.repository.SchoolDetailsRepository;
 import ph.jsalcedo.edumanager.utils.models.person.Address;
-import ph.jsalcedo.edumanager.entity.EnrollmentStatus;
+import ph.jsalcedo.edumanager.entity.school.EnrollmentStatus;
 
 import java.util.Date;
 import java.util.Optional;

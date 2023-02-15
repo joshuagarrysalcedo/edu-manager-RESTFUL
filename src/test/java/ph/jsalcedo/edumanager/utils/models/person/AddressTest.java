@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import ph.jsalcedo.edumanager.entity.Student;
+import ph.jsalcedo.edumanager.entity.student.Student;
 import ph.jsalcedo.edumanager.repository.StudentRepository;
 import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
 

@@ -1,11 +1,10 @@
-package ph.jsalcedo.edumanager.entity;
+package ph.jsalcedo.edumanager.entity.school;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
-import ph.jsalcedo.edumanager.entity.EnrollmentStatus;
 import ph.jsalcedo.edumanager.utils.models.person.Address;
 
 import java.util.*;

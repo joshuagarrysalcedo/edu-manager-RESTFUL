@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ph.jsalcedo.edumanager.repository.SchoolDetailsRepository;
 import ph.jsalcedo.edumanager.utils.models.person.Address;
-import ph.jsalcedo.edumanager.entity.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.school.SchoolDetails;
 
 import java.util.Date;
 

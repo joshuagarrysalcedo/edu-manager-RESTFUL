@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.entity;
+package ph.jsalcedo.edumanager.entity.student;
 
 import jakarta.persistence.*;
 import lombok.*;

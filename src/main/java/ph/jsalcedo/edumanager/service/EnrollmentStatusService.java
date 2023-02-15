@@ -1,7 +1,7 @@
 package ph.jsalcedo.edumanager.service;
 
-import ph.jsalcedo.edumanager.entity.SchoolDetails;
-import ph.jsalcedo.edumanager.entity.EnrollmentStatus;
+import ph.jsalcedo.edumanager.entity.school.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.school.EnrollmentStatus;
 
 import java.util.Optional;
 import java.util.Set;

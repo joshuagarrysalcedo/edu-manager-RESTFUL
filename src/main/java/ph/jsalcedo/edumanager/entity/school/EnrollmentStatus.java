@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.entity;
+package ph.jsalcedo.edumanager.entity.school;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;

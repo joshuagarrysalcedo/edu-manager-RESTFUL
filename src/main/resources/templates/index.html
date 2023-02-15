@@ -37,7 +37,8 @@
         <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
         <li class="nav-item"><a class="nav-link" href="#portfolio">Portfolio</a></li>
         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="#demo">Request Demo</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{http://localhost:3000/}" >Login</a></li>
       </ul>
     </div>
   </div>
@@ -169,7 +170,7 @@
   </div>
 </div>
 <!-- Call to action-->
-<section class="page-section bg-dark text-white">
+<section class="page-section bg-dark text-white" id="demo">
   <div class="container px-4 px-lg-5 text-center">
     <h2 class="mb-4">Free Download at Start Bootstrap!</h2>
     <a class="btn btn-success btn-xl" data-bs-target="#demo-request-modal" data-bs-toggle="modal" >Request a demo!</a>
@@ -579,7 +580,7 @@
               </div>
 
               <div class="form-group">
-                <input type="submit" value="REQUEST A DEMO" class="btn btn-primary btn-block">
+                <input type="submit" value="REQUEST A DEMO" class="btn btn-primary btn-block" th:href="@{#demo}" href="#demo">
               </div>
               <div class="form-group ">
                 <p class="custom-note"><small>By signing up you will agree to our <a href="#">Privacy Policy</a></small></p>

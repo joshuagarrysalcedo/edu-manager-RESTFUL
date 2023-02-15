@@ -10,7 +10,7 @@ import ph.jsalcedo.edumanager.service.SchoolDetailsService;
 import ph.jsalcedo.edumanager.repository.SchoolDetailsRepository;
 import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
 import ph.jsalcedo.edumanager.utils.models.person.Address;
-import ph.jsalcedo.edumanager.entity.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.school.SchoolDetails;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

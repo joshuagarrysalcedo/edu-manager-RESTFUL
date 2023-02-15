@@ -1,12 +1,10 @@
 package ph.jsalcedo.edumanager.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ph.jsalcedo.edumanager.entity.SchoolDetails;
-import ph.jsalcedo.edumanager.entity.EnrollmentStatus;
+import ph.jsalcedo.edumanager.entity.school.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.school.EnrollmentStatus;
 
 import java.util.Optional;
 import java.util.Set;

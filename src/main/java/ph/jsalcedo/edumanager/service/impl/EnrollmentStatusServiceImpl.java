@@ -2,10 +2,10 @@ package ph.jsalcedo.edumanager.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ph.jsalcedo.edumanager.entity.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.school.SchoolDetails;
 import ph.jsalcedo.edumanager.repository.EnrollmentStatusRepository;
 import ph.jsalcedo.edumanager.repository.SchoolDetailsRepository;
-import ph.jsalcedo.edumanager.entity.EnrollmentStatus;
+import ph.jsalcedo.edumanager.entity.school.EnrollmentStatus;
 import ph.jsalcedo.edumanager.service.EnrollmentStatusService;
 import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
 

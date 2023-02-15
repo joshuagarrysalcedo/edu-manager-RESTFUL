@@ -3,7 +3,7 @@ package ph.jsalcedo.edumanager.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import ph.jsalcedo.edumanager.utils.models.person.Address;
-import ph.jsalcedo.edumanager.entity.SchoolDetails;
+import ph.jsalcedo.edumanager.entity.school.SchoolDetails;
 
 import java.util.Date;
 import java.util.List;
