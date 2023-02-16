@@ -5,11 +5,29 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
+import org.springframework.security.core.userdetails.UserDetails;
 import ph.jsalcedo.edumanager.entity.school.School;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.ToDoubleBiFunction;
 
+/**
+ * <h1> Institution Entity</h1>
+ * <section>
+ * <h3>Description</h3>
+ * <ul>
+ *   <li>The "Institution" class represents a school or educational organization as a whole, which can have multiple schools or branches within it.</li>
+ *   <li>This relationship can be used to store and manage information about the user associated with the institution, such as their name, contact information, login credentials, and other relevant details. </li>
+ *   <li>the "Institution" class has a one-to-one relationship with the {@link ph.jsalcedo.edumanager.entity.appuser.AppUser AppUser} class</li>
+ * </ul>
+ * </section>
+ *
+ * @author Joshua Salcedo
+ * @version 1.0(COMPLETE)
+ * @created 15/02/2023
+ *
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -21,12 +39,6 @@ import java.util.List;
 @Builder
 public class Institution {
     @Id
-//    @GenericGenerator(
-//            name = "institution_sequence",
-//            strategy = "ph.jsalcedo.edumanager.utils.sequence.ResettableSequenceStyleGenerator",
-//            parameters = {@org.hibernate.annotations.Parameter(name = "sequence", value = "1")
-//            ,@org.hibernate.annotations.Parameter(name = "initialize_context", value = "1")}
-//    )
     @SequenceGenerator(
             name = "institution_sequence",
             sequenceName = "institution_sequence",
@@ -49,9 +61,5 @@ public class Institution {
             , orphanRemoval = true)
     private List<School> schools;
 
-
-
-
-
-
+    //TODO add a One-To-One Relationship with AppUser
 }
