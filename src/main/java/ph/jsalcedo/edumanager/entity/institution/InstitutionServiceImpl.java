@@ -5,14 +5,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ph.jsalcedo.edumanager.entity.school.School;
 import ph.jsalcedo.edumanager.entity.school.SchoolRepository;
-import ph.jsalcedo.edumanager.exception.DuplicateSchoolNameException;
-import ph.jsalcedo.edumanager.exception.InstitutionNotFoundException;
-import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
+import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.DuplicateSchoolNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.InstitutionNotFoundException;
+import ph.jsalcedo.edumanager.utils.NameChecker;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 @Service
@@ -24,8 +23,8 @@ public class InstitutionServiceImpl implements InstitutionService{
     private final SchoolRepository schoolRepository;
     @Override
     public void add(Institution institution){
-        if((isNotValid(institution.getInstitutionName()))){
-            throw new IllegalStateException(ErrorMessage.Constants.INVALID_NAME);
+        if((!NameChecker.isNameValid((institution.getInstitutionName())))){
+            throw new CustomInvalidNameException(institution.getInstitutionName());
         }
         institutionRepository.save(institution);
     }
@@ -75,32 +74,8 @@ public class InstitutionServiceImpl implements InstitutionService{
         institutionRepository.save(institution);
 
     }
-// TODO: 16/02/2023 Need to transfer removeSchool and update School to the SchoolService!
 
 
 
-//    @Override
-//    public void removeSchool(Institution institution, School school) {
-//
-//    }
 
-
-//    /**
-//     * @param institution
-//     * @param id this is the schoolID throws an error of id does not exists
-//     * @param school
-//     */
-//    @Override
-//    public void updateSchool(Institution institution, Long id, School school) {
-//
-//    }
-
-
-    private boolean isNotValid(String institutionName) {
-        String regex = "^[A-Za-z][A-Za-z0-9&\\s.'()-]{0,99}$";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(institutionName);
-
-        return !matcher.find();
-    }
 }

@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.exception;
+package ph.jsalcedo.edumanager.exceptions.exception;
 
 import lombok.Getter;
 import lombok.Setter;

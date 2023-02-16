@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.exception;
+package ph.jsalcedo.edumanager.exceptions.exception;
 
 public class InstitutionNotFoundException extends RuntimeException{
     public InstitutionNotFoundException(Long id) {

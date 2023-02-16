@@ -1,6 +1,5 @@
 package ph.jsalcedo.edumanager.entity.school;
 
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -9,11 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
 import ph.jsalcedo.edumanager.entity.institution.InstitutionRepository;
 import ph.jsalcedo.edumanager.entity.institution.InstitutionService;
-import ph.jsalcedo.edumanager.exception.DuplicateSchoolNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.DuplicateSchoolNameException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest

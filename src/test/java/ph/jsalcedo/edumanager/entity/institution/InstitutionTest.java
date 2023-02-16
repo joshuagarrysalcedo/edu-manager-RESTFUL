@@ -1,8 +1,6 @@
 package ph.jsalcedo.edumanager.entity.institution;
 
-import jakarta.persistence.SequenceGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.util.logging.Log;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,18 +10,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ph.jsalcedo.edumanager.entity.school.School;
-import ph.jsalcedo.edumanager.exception.DuplicateSchoolNameException;
-import ph.jsalcedo.edumanager.exception.InstitutionNotFoundException;
+import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.DuplicateSchoolNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.ExceptionMessage;
+import ph.jsalcedo.edumanager.exceptions.exception.InstitutionNotFoundException;
 import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
 import ph.jsalcedo.edumanager.utils.sequence.ResettableSequenceStyleGenerator;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static java.rmi.server.LogStream.log;
 
 @SpringBootTest
 @Slf4j
@@ -67,13 +62,13 @@ class InstitutionTest {
 
 
 
-        Exception exception = Assertions.assertThrows(IllegalStateException.class, ()->{
+        Exception exception = Assertions.assertThrows(CustomInvalidNameException.class, ()->{
             institutionService.add(institution);
         });
 
         String result = exception.getMessage();
-
-        Assertions.assertEquals(ErrorMessage.Constants.INVALID_NAME, result);
+        System.out.println(result);
+        Assertions.assertEquals(String.format(ExceptionMessage.INVALID_NAME_MESSAGE, test), result);
     }
 
 

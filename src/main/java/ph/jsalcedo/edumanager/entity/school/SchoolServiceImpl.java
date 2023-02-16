@@ -7,7 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
-import ph.jsalcedo.edumanager.exception.DuplicateSchoolNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.DuplicateSchoolNameException;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +29,6 @@ public class SchoolServiceImpl implements SchoolService{
      *     <dd>School name must be <b>valid!</b></dd>
      * </dl>
      *
-     * @param school
      * @author Joshua Salcedo
      * @created 16/02/2023 - 2:58 pm
      */

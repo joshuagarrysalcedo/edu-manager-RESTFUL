@@ -1,4 +1,4 @@
-package ph.jsalcedo.edumanager.exception;
+package ph.jsalcedo.edumanager.exceptions.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,10 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class UserNotFoundAdvice {
-
+public class InstitutionNotFoundAdvice {
     @ResponseBody
-    @ExceptionHandler(UsernameNotFoundException.class)
+    @ExceptionHandler(InstitutionNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> exceptionHandler(UsernameNotFoundException exception){
         Map<String, String> errorMap = new HashMap<>();
