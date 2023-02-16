@@ -7,16 +7,38 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
-import ph.jsalcedo.edumanager.exceptions.exception.DuplicateSchoolNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.CustomEntityNotFoundException;
+import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.DuplicateNameException;
+import ph.jsalcedo.edumanager.utils.NameChecker;
 
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <h1> SCHOOL SERVICE</h1>
+ * <dl>
+ * <dt>PURPOSE</dt>
+ * <dd><b>Implementation for all Business Rules for School Entity </b></dd>
+ * <dt>TYPE</dt>
+ * <dd><b>SERVICE CLASS</b></dd>
+ * </dl>
+ * <b>Note:</b> *
+ * <h2>@created 16/02/2023</h2>
+ * <h2>@author Joshua Salcedo</h2>
+ */
 @Service
 @AllArgsConstructor
 public class SchoolServiceImpl implements SchoolService{
     private final static String ENTITY_NOT_FOUND_EXCEPTION_MESSAGE = "Entity with {%s : %s} is not found";
     private final SchoolRepository schoolRepository;
+
+
+
+
+
+
+
 
 
     /**
@@ -37,51 +59,63 @@ public class SchoolServiceImpl implements SchoolService{
         List<School> schoolList = schoolRepository.findAllByInstitution(school.getInstitution());
 
         for(School s : schoolList){
-
+            if(NameChecker.isNameInvalid(school.getSchoolName()))
+                throw new CustomInvalidNameException(school.getSchoolName());
             // CHECKS THAT NO DUPLICATE SCHOOL NAME!
-            if(isSchoolNameDuplicate(s.getSchoolName(), school.getSchoolName())
+            if(NameChecker.isNameDuplicate(s.getSchoolName(), school.getSchoolName())
                     && !s.getId().equals(school.getId()))
-                throw new DuplicateSchoolNameException(school.getSchoolName());
+                throw new DuplicateNameException(school.getSchoolName());
         }
+        schoolRepository.save(school);
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**
-     * <h1>Duplicate Name Checker</h1>
-     * <p>This Utility method ensures that the program has the same standards for what is considered a duplicate String!.</p>
-     * <p>this is a helper method to compare the Strings</p>
-     * <b>@returns</b>
-     *<dl>
-     *     <dt>True</dt>
-     *     <dd>'  xx' and 'XX'</dd>
-     *     <dd>'x_x' and 'xx'</dd>
-     *     <dd>'xx' and 'x x'</dd>
-     *     <dt>False</dt>
-     *     <dd>'xy' and 'xx'</dd>
-     *     <dd>'x school' and `x university`</dd>
-     *</dl>
+     * <h1>RETRIEVE School by Institution</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @return List of all schools by their institution
+     * @author Joshua Salcedo
+     * @created 16/02/2023 - 9:46 pm
+     */
+    @Override
+    public List<School> findSchoolsByInstitution(Institution institution) {
+       return schoolRepository.findAllByInstitution(institution);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * <h1>FIND school by ID AND INSTITUTION</h1>
      *
      * @author Joshua Salcedo
-     * @created 16/02/2023 - 3:11 pm
+     * @created 16/02/2023 - 9:45 pm
      */
-    private boolean isSchoolNameDuplicate(String schoolName, String newSchoolName) {
-        schoolName = schoolName.replace("[^a-zA-Z0-9]", "").trim();
-        newSchoolName = newSchoolName.replace("[^a-zA-Z0-9]", "").trim();
-        System.out.println("Old School Name " + schoolName);
-        System.out.println("New School Name " + newSchoolName);
-        return schoolName.equalsIgnoreCase(newSchoolName);
-    }
-
-    @Override
-    public void deleteSchool(Long schoolID) {
-
-    }
-
-    @Override
-    public void findSchoolByInstitution(Institution institution) {
-
-    }
-
     @Override
     public School findSchoolByInstitutionAndName(Institution institution, String name) {
 
@@ -91,8 +125,21 @@ public class SchoolServiceImpl implements SchoolService{
         return schoolOptional.get();
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * <h1>findSchoolByID</h1>
+     * <h1>Find School by ID</h1>
      * <p>Explain here!</p>
      * <b>Note:</b>
      *
@@ -107,6 +154,35 @@ public class SchoolServiceImpl implements SchoolService{
         if(schoolOptional.isEmpty())
             throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE, "School ID", Long.toString(id)));
         return schoolOptional.get();
+    }
+
+    /**
+     * <h1>findAllByInstitution</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param institution
+     * @return
+     * @author Joshua Salcedo
+     * @created 17/02/2023 - 12:43 am
+     */
+    @Override
+    public List<School> findAllByInstitution(Institution institution) {
+       return schoolRepository.findAllByInstitution(institution);
+    }
+
+    /**
+     * <h1>deleteById</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param id
+     * @author Joshua Salcedo
+     * @created 17/02/2023 - 12:44 am
+     */
+    @Override
+    public void deleteById(Long id) {
+        schoolRepository.deleteById(id);
     }
 
 

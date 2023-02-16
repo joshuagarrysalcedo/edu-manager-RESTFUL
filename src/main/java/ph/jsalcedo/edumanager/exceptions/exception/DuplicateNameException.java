@@ -2,15 +2,16 @@ package ph.jsalcedo.edumanager.exceptions.exception;
 
 import lombok.Getter;
 import lombok.Setter;
+import ph.jsalcedo.edumanager.exceptions.ExceptionMessage;
 
 @Getter
 @Setter
-public class DuplicateSchoolNameException extends RuntimeException{
+public class DuplicateNameException extends RuntimeException{
 
     private final String description;
     private final String resolution;
-    public DuplicateSchoolNameException(String schoolName) {
-        super(String.format("Error: School [%s] name already exists", schoolName));
+    public DuplicateNameException(String schoolName) {
+        super(String.format(ExceptionMessage.DUPLICATE_NAME_MESSAGE, schoolName));
         this.description = "Description: " +
                 "The school name you are attempting to add or update already exists in the database. " +
                 "Duplicate school names are not allowed.";

@@ -2,6 +2,7 @@ package ph.jsalcedo.edumanager.exceptions.exception;
 
 import lombok.Getter;
 import lombok.Setter;
+import ph.jsalcedo.edumanager.exceptions.ExceptionMessage;
 
 /**
  * <h1> Custom exception for an invalid name for the whole program! </h1>

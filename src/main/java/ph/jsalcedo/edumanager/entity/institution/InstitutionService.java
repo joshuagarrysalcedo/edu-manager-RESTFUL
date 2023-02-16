@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface InstitutionService {
     @Transactional
-    void add(Institution institution);
+    void create(Institution institution);
     int count();
 
     List<Institution> all();
@@ -23,4 +23,5 @@ public interface InstitutionService {
     void addSchool(Long id, School school);
 
 
+    void deleteSchool(Long id , School school);
 }

@@ -10,12 +10,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ph.jsalcedo.edumanager.entity.school.School;
+import ph.jsalcedo.edumanager.entity.school.SchoolRepository;
+import ph.jsalcedo.edumanager.entity.school.SchoolService;
+import ph.jsalcedo.edumanager.exceptions.exception.CustomEntityNotFoundException;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
-import ph.jsalcedo.edumanager.exceptions.exception.DuplicateSchoolNameException;
-import ph.jsalcedo.edumanager.exceptions.exception.ExceptionMessage;
+import ph.jsalcedo.edumanager.exceptions.exception.DuplicateNameException;
+import ph.jsalcedo.edumanager.exceptions.ExceptionMessage;
 import ph.jsalcedo.edumanager.exceptions.exception.InstitutionNotFoundException;
-import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
-import ph.jsalcedo.edumanager.utils.sequence.ResettableSequenceStyleGenerator;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,23 +27,41 @@ class InstitutionTest {
 
     private final InstitutionService institutionService;
     private final InstitutionRepository institutionRepository;
+    private final SchoolRepository schoolRepository;
+    private final SchoolService schoolService;
     private Institution institution;
     @Autowired
-    public InstitutionTest(InstitutionService institutionService, InstitutionRepository institutionRepository) {
+    public InstitutionTest(InstitutionService institutionService, InstitutionRepository institutionRepository, SchoolRepository schoolRepository, SchoolService schoolService) {
         this.institutionService = institutionService;
         this.institutionRepository = institutionRepository;
+        this.schoolRepository = schoolRepository;
+        this.schoolService = schoolService;
     }
 
     @BeforeEach()
     void initialize(){
 
       this.institution = Institution.builder().institutionName("InstitutionTest").build();
-        institutionService.add(institution);
+        institutionService.create(institution);
+
+        Optional<Institution> var = institutionRepository.findFirstByOrderByIdDesc();
+        Assertions.assertTrue(var.isPresent());
+        System.out.println("Here at SchoolServiceTest ID: " +var.get().getId());
+        String[] schoolArr = {
+                "Lone Pine School",
+                "Village Kindergarten",
+                "Paradise School of Fine Arts",
+                "Oceanside High",
+                "Coral Coast School of Fine Arts"
+        };
+
+        for (String s : schoolArr) {
+            institutionService.addSchool(var.get().getId(), School.builder().schoolName(s).build());
+        }
     }
 
     @AfterEach
     void reset(){
-        ResettableSequenceStyleGenerator.resetAllInstances();
         institutionRepository.deleteAll();
     }
 
@@ -63,7 +82,7 @@ class InstitutionTest {
 
 
         Exception exception = Assertions.assertThrows(CustomInvalidNameException.class, ()->{
-            institutionService.add(institution);
+            institutionService.create(institution);
         });
 
         String result = exception.getMessage();
@@ -87,7 +106,7 @@ class InstitutionTest {
     void shouldReturnTrueBecauseNamesAreValid(String test){
         Institution institution = Institution.builder().institutionName(test).build();
 
-            institutionService.add(institution);
+            institutionService.create(institution);
         Assertions.assertEquals(2, institutionService.count());
     }
 
@@ -108,10 +127,10 @@ class InstitutionTest {
             "101"
     })
     void shouldThrowAndErrorForDeletingARecordThatDoesNotExists(String test){
-        Exception exception = Assertions.assertThrows(InstitutionNotFoundException.class, ()->{
+        Exception exception = Assertions.assertThrows(CustomEntityNotFoundException.class, ()->{
             institutionService.deleteInstitution(Long.parseLong(test));
         });
-        String expected = String.format("Cannot find Institution with id %s", test);
+        String expected = String.format(ExceptionMessage.ENTITY_NOT_FOUND_MESSAGE, "Institution ID", test);
         String result = exception.getMessage();
         Assertions.assertEquals(expected, result);
     }
@@ -138,16 +157,17 @@ class InstitutionTest {
         Assertions.assertTrue(var.isPresent());
 
         System.out.println("Here at thisTestShouldThrowADuplicateSchoolNameException ID : " + var.get().getId());
-        Exception exception = Assertions.assertThrows(DuplicateSchoolNameException.class, ()->{
+        Exception exception = Assertions.assertThrows(DuplicateNameException.class, ()->{
             for (String name : names) {
                 School school = School.builder().schoolName(name).build();
                 institutionService.addSchool(var.get().getId(), school);
             }
         });
 
-        String expected = String.format("Error: School [%s] name already exists", names[0]);
+        String expected = String.format(ExceptionMessage.DUPLICATE_NAME_MESSAGE, names[0]);
         String result = exception.getMessage();
 
+        System.out.println("Testing DuplicateSchoolName result: " + result);
         Assertions.assertEquals(expected, result);
 
     }
@@ -175,41 +195,29 @@ class InstitutionTest {
     }
 
 
-    // TODO: 16/02/2023 Transfer this test to the SchoolServiceTest! 
-    
-//    @ParameterizedTest
-//    @CsvSource({
-//            "ccs, ssc",
-//            "ggs, ssg",
-//            "omg, mgo"
-//    })
-//    void thisShouldChangeTheNameOfTheSchool(String oldVar, String newVar){
-//        Institution institution = Institution.builder("add school test");
-//        institutionService.add(institution);
-//
-//        Assertions.assertFalse(institution.getSchools().stream().anyMatch(i->
-//            i.getSchoolName().equalsIgnoreCase(oldVar)));
-//
-//        institutionService.addSchool(institution, School.builder().schoolName(oldVar).build());
-//
-//        Assertions.assertTrue(institution.getSchools().stream().anyMatch(i->
-//                i.getSchoolName().equalsIgnoreCase(oldVar)));
-//
-//        Long schoolID = institution.getSchools().stream()
-//                .filter(school -> school.getSchoolName().equalsIgnoreCase(oldVar))
-//                .map(School::getId)
-//                .findFirst()
-//                .orElse(null);
-//
-//        Assertions.assertNotNull(schoolID);
-//
-//        institutionService.updateSchool(institution, schoolID, School.builder().schoolName(newVar).build());
-//
-//        Assertions.assertFalse(institution.getSchools().stream().anyMatch(i->
-//                i.getSchoolName().equalsIgnoreCase(oldVar)));
-//
-//        Assertions.assertTrue(institution.getSchools().stream().anyMatch(i->
-//                i.getSchoolName().equalsIgnoreCase(newVar)));
-//    }
+    @Test
+    void shouldDeleteASchool(){
+        Optional<Institution> optionalInstitution = institutionRepository.findFirstByOrderByIdDesc();
+        Assertions.assertTrue(optionalInstitution.isPresent());
+
+        int originalSize = schoolRepository.findAllByInstitution(optionalInstitution.get()).size();
+        School school = schoolService.findSchoolByInstitutionAndName(optionalInstitution.get(), "Lone Pine School");
+        Assertions.assertEquals(originalSize, optionalInstitution.get().getSchools().size());
+
+
+        System.out.println("Original Length : " + originalSize);
+        String deletedSchoolName = school.getSchoolName();
+        System.out.println("Soon to be deleted School Name");
+        institutionService.deleteSchool(optionalInstitution.get().getId(), school);
+        int newLength = schoolRepository.findAllByInstitution(optionalInstitution.get()).size();
+        System.out.println("New Length :" + newLength);
+        Optional<School> deletedSchool = schoolRepository.findByInstitutionAndSchoolName(optionalInstitution.get(), deletedSchoolName);
+        Assertions.assertTrue(deletedSchool.isEmpty());
+
+         Assertions.assertNotEquals(originalSize, newLength);
+    }
+
+
+
 }
 
