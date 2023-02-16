@@ -4,7 +4,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ph.jsalcedo.edumanager.entity.school.School;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface InstitutionService {
     @Transactional
@@ -17,10 +16,11 @@ public interface InstitutionService {
     @Transactional
     void update(Institution institution);
 
-    Institution getInstitution(Long id);
+
+    Institution getInstitution(Long institutionID);
 
     @Transactional
+    void addSchool(Long id, School school);
 
-    void addSchool(Institution institution, School school);
 
 }

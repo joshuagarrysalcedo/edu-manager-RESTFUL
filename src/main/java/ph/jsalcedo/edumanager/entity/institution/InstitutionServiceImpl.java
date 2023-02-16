@@ -50,16 +50,20 @@ public class InstitutionServiceImpl implements InstitutionService{
 
     @Override
     public void update(Institution institution) {
-
+        institutionRepository.save(institution);
     }
 
     @Override
     public Institution getInstitution(Long id) {
-        return null;
+        Optional<Institution> optionalInstitution = institutionRepository.findById(id);
+        if(optionalInstitution.isEmpty())
+            throw new InstitutionNotFoundException(id);
+        return optionalInstitution.get();
     }
 
     @Override
-    public void addSchool(Institution institution, School school) {
+    public void addSchool(Long institutionID, School school) {
+        Institution institution = getInstitution(institutionID);
         List<School> schools = schoolRepository.findAllByInstitution(institution);
         schools.forEach(e->{
             if(e.getSchoolName() .equalsIgnoreCase(school.getSchoolName()))
@@ -71,6 +75,25 @@ public class InstitutionServiceImpl implements InstitutionService{
         institutionRepository.save(institution);
 
     }
+// TODO: 16/02/2023 Need to transfer removeSchool and update School to the SchoolService!
+
+
+
+//    @Override
+//    public void removeSchool(Institution institution, School school) {
+//
+//    }
+
+
+//    /**
+//     * @param institution
+//     * @param id this is the schoolID throws an error of id does not exists
+//     * @param school
+//     */
+//    @Override
+//    public void updateSchool(Institution institution, Long id, School school) {
+//
+//    }
 
 
     private boolean isNotValid(String institutionName) {

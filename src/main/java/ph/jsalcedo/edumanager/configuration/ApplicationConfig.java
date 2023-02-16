@@ -1,6 +1,7 @@
 package ph.jsalcedo.edumanager.configuration;
 
 import com.github.javafaker.Faker;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
