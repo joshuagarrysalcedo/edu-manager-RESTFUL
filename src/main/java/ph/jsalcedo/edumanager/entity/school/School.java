@@ -3,12 +3,17 @@
 package ph.jsalcedo.edumanager.entity.school;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
+import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *<h1> School </h1>
  *<p>This class implements the school entity for the application</p>
@@ -27,8 +32,6 @@ import ph.jsalcedo.edumanager.entity.institution.Institution;
 @Setter
 @Table
 @Builder
-@ToString
-
 public class School {
     @Id
     @SequenceGenerator(
@@ -42,7 +45,7 @@ public class School {
     )
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Institution.class, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Institution.class)
     @JoinColumn(name = "institution_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
@@ -50,4 +53,22 @@ public class School {
 
     private String schoolName;
 
+    @JsonManagedReference
+    @OneToMany
+            (mappedBy = "school"
+                    , targetEntity = Curriculum.class
+                    , fetch = FetchType.EAGER
+                    , cascade = CascadeType.ALL
+                    , orphanRemoval = true)
+    private List<Curriculum> curriculum = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "School{" +
+                "id=" + id +
+                ", institution=" + (institution.getInstitutionName() == null ? "NULL": institution.getInstitutionName())  +
+                ", schoolName='" + schoolName + '\'' +
+                ", curriculum=" + curriculum +
+                '}';
+    }
 }

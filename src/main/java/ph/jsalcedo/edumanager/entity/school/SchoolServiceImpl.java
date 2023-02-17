@@ -7,13 +7,18 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
+import ph.jsalcedo.edumanager.entity.institution.InstitutionRepository;
+import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
+import ph.jsalcedo.edumanager.entity.school.curriculum.CurriculumService;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomEntityNotFoundException;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
 import ph.jsalcedo.edumanager.exceptions.exception.DuplicateNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.EntityNotOwnedException;
 import ph.jsalcedo.edumanager.utils.NameChecker;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * <h1> SCHOOL SERVICE</h1>
@@ -32,8 +37,8 @@ import java.util.Optional;
 public class SchoolServiceImpl implements SchoolService{
     private final static String ENTITY_NOT_FOUND_EXCEPTION_MESSAGE = "Entity with {%s : %s} is not found";
     private final SchoolRepository schoolRepository;
-
-
+    private final CurriculumService curriculumService;
+    private final InstitutionRepository institutionRepository;
 
 
 
@@ -157,6 +162,41 @@ public class SchoolServiceImpl implements SchoolService{
     }
 
     /**
+     * <h1>findLatestSchoolByInstitution</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param institution
+     * @return
+     * @author Joshua Salcedo
+     * @created 17/02/2023 - 5:37 am
+     * TODO
+     */
+
+    @Override
+    public School findLatestSchoolByInstitution(Institution institution) {
+       return schoolRepository.findFirstByInstitutionOrderById(institution);
+    }
+
+    /**
+     * <h1>findLatestSchool</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @return
+     * @author Joshua Salcedo
+     * @created 17/02/2023 - 5:37 am
+     * TODO
+     */
+    @Override
+    public School findLatestSchool() {
+       Optional<School> optional =  schoolRepository.findFirstByOrderByIdDesc();
+       if(optional.isEmpty())
+           throw new RuntimeException("NO school is in the record");
+       return optional.get();
+    }
+
+    /**
      * <h1>findAllByInstitution</h1>
      * <p>Explain here!</p>
      * <b>Note:</b>
@@ -165,6 +205,7 @@ public class SchoolServiceImpl implements SchoolService{
      * @return
      * @author Joshua Salcedo
      * @created 17/02/2023 - 12:43 am
+     * TODO
      */
     @Override
     public List<School> findAllByInstitution(Institution institution) {
@@ -181,8 +222,93 @@ public class SchoolServiceImpl implements SchoolService{
      * @created 17/02/2023 - 12:44 am
      */
     @Override
-    public void deleteById(Long id) {
+    public void deleteSchoolById(Long id) {
         schoolRepository.deleteById(id);
+    }
+
+    /**
+     * <h1>getAllCurriculum</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @return
+     * @author Joshua Salcedo
+     * @created 17/02/2023 - 5:37 am
+     * TODO
+     */
+    @Override
+    public List<Curriculum> getAllCurriculum() {
+        return null;
+    }
+
+    /**
+     * <h1>addCurriculum</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param schoolID
+     * @param curriculum
+     * @author Joshua Salcedo
+     * @created 17/02/2023 - 5:37 am
+     * TODO
+     */
+    @Override
+    public School addCurriculum(Long schoolID, Curriculum curriculum) {
+        School school = findSchoolByID(schoolID);
+        List<Curriculum> curriculumList = curriculumService.findAllCurriculumBySchool(school);
+        curriculumList.forEach(e->{ // TODO: 16/02/2023 We need to refactor this! Need to make sure that
+            if(e.getCurriculumName() .equalsIgnoreCase(curriculum.getCurriculumName()))
+                throw new DuplicateNameException(e.getCurriculumName());
+        });
+
+        curriculum.setSchool(school);
+        school.getCurriculum().add(curriculum);
+        return schoolRepository.saveAndFlush(school);
+    }
+
+    /**
+     * <h1>deleteCurriculum</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param schoolID
+     * @param curriculum
+     * @author Joshua Salcedo
+     * @created 17/02/2023 - 5:37 am
+     * TODO
+     */
+    @Override
+    public School deleteCurriculum(Long schoolID, Curriculum curriculum) {
+        School school= getSchool(schoolID);
+
+        System.out.println("School name : " + school.getSchoolName());
+        System.out.println("Has a total of curriculum:  " + school.getCurriculum().size() );
+        AtomicBoolean isFound = new AtomicBoolean(false);
+
+        school.getCurriculum().forEach((e)->{
+            if(e.getCurriculumName().equalsIgnoreCase(curriculum.getCurriculumName()))
+                isFound.set(true);
+        });
+        if(!isFound.get())
+            throw new EntityNotOwnedException("School", "Curriculum", "ID",curriculum.getId());
+
+        school.getCurriculum().removeIf(e->
+            e.getCurriculumName().equalsIgnoreCase(curriculum.getCurriculumName()));
+        curriculum.setSchool(null);
+
+
+
+         return schoolRepository.saveAndFlush(school);
+
+
+    }
+
+    public School getSchool(Long schoolID) {
+        Optional<School> optionalSchool = schoolRepository.findById(schoolID);
+        if(optionalSchool.isEmpty())
+            throw new CustomEntityNotFoundException("School ID", schoolID);
+
+        return optionalSchool.get();
     }
 
 

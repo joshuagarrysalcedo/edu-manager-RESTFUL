@@ -33,7 +33,6 @@ import java.util.function.ToDoubleBiFunction;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table
 @EqualsAndHashCode
 @Builder
@@ -59,7 +58,16 @@ public class Institution {
             , fetch = FetchType.EAGER
             , cascade = CascadeType.ALL
             , orphanRemoval = true)
-    private List<School> schools;
+    private List<School> schools = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Institution{" +
+                "id=" + id +
+                ", institutionName='" + institutionName + '\'' +
+                ", schools=" + schools +
+                '}';
+    }
 
     //TODO add a One-To-One Relationship with AppUser
 }

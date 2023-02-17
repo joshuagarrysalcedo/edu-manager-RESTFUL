@@ -138,10 +138,15 @@ class InstitutionTest {
     @Test
     void shouldBeAbleToDeleteARecordFromRepo(){
         List<Institution> institutionList = institutionService.all();
-        institutionList.forEach(i-> System.out.println(i.getInstitutionName() + " " + i.getId()));
+
         Assertions.assertEquals(1, institutionService.count());
-        institutionService.deleteInstitution(1L);
-//        Assertions.assertEquals(0, institutionService.count());
+        institutionList.forEach((i)->{
+            System.out.println("Institution ID: " + i.getId());
+            institutionService.deleteInstitution(i.getId());
+        });
+
+
+        Assertions.assertEquals(0, institutionService.count());
     }
 
     @ParameterizedTest
@@ -182,6 +187,9 @@ class InstitutionTest {
             "ssdfsdfasfasfsadf;dfgqqrqwrq;asfasf, 3"
     })
     void thisShouldTestWhetherOrNotTheDatabaseIsUpdatedAfterAdding(String test, String count){
+
+
+
         String[] names = test.split(";");
         Optional<Institution> var = institutionRepository.findFirstByOrderByIdDesc();
         Assertions.assertTrue(var.isPresent());
@@ -192,6 +200,8 @@ class InstitutionTest {
         }
 
         Assertions.assertEquals(names.length, Integer.parseInt(count));
+
+
     }
 
 

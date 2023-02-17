@@ -1,11 +1,9 @@
 package ph.jsalcedo.edumanager.entity.institution;
 
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.jpa.repository.query.InvalidJpaQueryMethodException;
 import org.springframework.stereotype.Service;
 import ph.jsalcedo.edumanager.entity.school.School;
 import ph.jsalcedo.edumanager.entity.school.SchoolService;
@@ -84,11 +82,11 @@ public class InstitutionServiceImpl implements InstitutionService{
      *
      */
     @Override
-    public void create(@NotNull Institution institution){
+    public Institution create(@NotNull Institution institution){
         if((NameChecker.isNameInvalid((institution.getInstitutionName())))){
             throw new CustomInvalidNameException(institution.getInstitutionName());
         }
-        institutionRepository.save(institution);
+        return institutionRepository.saveAndFlush(institution);
     }
 
 
@@ -243,17 +241,25 @@ public class InstitutionServiceImpl implements InstitutionService{
      * @created 16/02/2023 - 9:49 pm
      */
     @Override
-    public void addSchool(Long institutionID, School school) {
+    public Institution addSchool(Long institutionID, School school) {
+
+
+        if(NameChecker.isNameInvalid(school.getSchoolName()))
+            throw new CustomInvalidNameException(school.getSchoolName());
+
+
         Institution institution = getInstitution(institutionID);
         List<School> schools = schoolService.findAllByInstitution(institution);
         schools.forEach(e->{ // TODO: 16/02/2023 We need to refactor this! Need to make sure that
-            if(e.getSchoolName() .equalsIgnoreCase(school.getSchoolName()))
+            if(NameChecker.isNameDuplicate(e.getSchoolName(),school.getSchoolName()))
                 throw new DuplicateNameException(e.getSchoolName());
+
+
         });
 
         school.setInstitution(institution);
         institution.getSchools().add(school);
-        institutionRepository.save(institution);
+        return institutionRepository.saveAndFlush(institution);
 
     }
 
@@ -285,20 +291,29 @@ public class InstitutionServiceImpl implements InstitutionService{
      */
     @Override
     public void deleteSchool(@NotNull Long id, @NotNull School school) {
-        if(!institutionRepository.existsById(id))
-            throw new CustomEntityNotFoundException("Institution ID" ,id);
         Institution institution = getInstitution(id);
 
-        school.setInstitution(null);
-
+        //Check if parent really exists
+        if(!institutionRepository.existsById(id))
+            throw new CustomEntityNotFoundException("Institution ID" ,id);
         AtomicBoolean isFound = new AtomicBoolean(false);
+
+        //Check if the School is the Child of the parent first!
         institution.getSchools().forEach((e)->{
             if(e.getSchoolName().equalsIgnoreCase(school.getSchoolName()))
                 isFound.set(true);
         });
         if(!isFound.get())
             throw new EntityNotOwnedException("Institution", "School", "schoolID",school.getId());
-        schoolService.deleteById(school.getId());
+
+
+        //remove
+        school.setInstitution(null);
+        institution.getSchools().removeIf((e)->
+            e.getSchoolName().equalsIgnoreCase(school.getSchoolName())
+        );
+
+     //delete
         institutionRepository.save(institution);
     }
 
