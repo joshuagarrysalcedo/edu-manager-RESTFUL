@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import ph.jsalcedo.edumanager.utils.models.enums.Student_Status;
+import ph.jsalcedo.edumanager.utils.models.person.Name;
 import ph.jsalcedo.edumanager.utils.models.person.Person;
 
 
@@ -18,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EnableJpaAuditing
-public class Student extends Person {
+public abstract class Student extends Person {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -26,7 +27,9 @@ public class Student extends Person {
 
     @Enumerated(EnumType.STRING)
     private Student_Status studentStatus;
-    private String course;
+
+    @Embedded
+    private Name name;
 
 
 
