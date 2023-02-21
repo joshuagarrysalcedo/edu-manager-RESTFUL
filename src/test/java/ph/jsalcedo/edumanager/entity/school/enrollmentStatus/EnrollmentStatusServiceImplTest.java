@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ph.jsalcedo.edumanager.entity.appuser.AppUserRepository;
 import ph.jsalcedo.edumanager.entity.school.schooldetails.SchoolDetails;
 import ph.jsalcedo.edumanager.entity.school.enrollmentstatus.EnrollmentStatusServiceImpl;
 import ph.jsalcedo.edumanager.entity.school.enrollmentstatus.EnrollmentStatusRepository;
@@ -30,19 +31,21 @@ class EnrollmentStatusServiceImplTest {
 
     private final SchoolDetailsService schoolDetailsService;
     private  EnrollmentStatus status;
-
+    private final AppUserRepository appUserRepository;
     @Autowired
-    public EnrollmentStatusServiceImplTest(EnrollmentStatusServiceImpl impl, SchoolDetailsRepository repository, EnrollmentStatusRepository enrollmentStatusRepository, SchoolDetailsService schoolDetailsService) {
+    public EnrollmentStatusServiceImplTest(EnrollmentStatusServiceImpl impl, SchoolDetailsRepository repository, EnrollmentStatusRepository enrollmentStatusRepository, SchoolDetailsService schoolDetailsService, AppUserRepository appUserRepository) {
         this.impl = impl;
         this.repository = repository;
         this.enrollmentStatusRepository = enrollmentStatusRepository;
 
         this.schoolDetailsService = schoolDetailsService;
 
+        this.appUserRepository = appUserRepository;
     }
 
     @BeforeEach
     void initialize(){
+        appUserRepository.deleteAll();
         this.schoolDetails =
                 SchoolDetails.builder()
                         .schoolDomain("sample-school.com")

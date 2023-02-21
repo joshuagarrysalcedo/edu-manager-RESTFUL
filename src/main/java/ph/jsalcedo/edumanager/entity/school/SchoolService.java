@@ -1,10 +1,11 @@
 package ph.jsalcedo.edumanager.entity.school;
 
+import org.springframework.transaction.annotation.Transactional;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
 import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
+import ph.jsalcedo.edumanager.entity.student.Student;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * <h1> ${NAME}</h1>
@@ -23,7 +24,7 @@ import java.util.Optional;
  */
 public interface SchoolService {
 
-    void updateSchool(School school);
+    void updateCurriculum(School school);
 
 
     List<School> findSchoolsByInstitution(Institution institution);
@@ -44,7 +45,18 @@ public interface SchoolService {
 
     List<Curriculum> getAllCurriculum();
 
-    School addCurriculum(Long schoolID, Curriculum curriculum);
-    School deleteCurriculum(Long schoolID, Curriculum curriculum);
+    @Transactional
 
+    School addCurriculum(Long schoolID, Curriculum curriculum);
+    @Transactional
+    School deleteCurriculum(Long schoolID, Curriculum curriculum);
+    @Transactional
+    School updateCurriculum(Long schoolID, Curriculum curriculum);
+
+    @Transactional
+    School addStudent(Long schoolID, Student student);
+    @Transactional
+    School deleteStudent(Long schoolID, Student student);
+
+    School findSchoolByInstitutionAndSchoolName(Institution institution, String schoolName);
 }

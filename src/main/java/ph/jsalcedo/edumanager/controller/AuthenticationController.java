@@ -1,5 +1,6 @@
 package ph.jsalcedo.edumanager.controller;
 
+import com.github.javafaker.App;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +54,13 @@ public class AuthenticationController {
         System.out.println("All users!");
         return appUserService.getAllUsers();
     }
+
+
+//    @GetMapping(value = "/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public AppUser getAppUser(@PathVariable ("id") Long id){
+//        return appUserService.getAppuser(id);
+//    }
+
 
     @GetMapping(value = "/user/token/{token}", produces = MediaType.APPLICATION_JSON_VALUE)
     public AppUser getUserByToken(@PathVariable("token") String token){

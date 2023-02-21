@@ -1,16 +1,16 @@
 package ph.jsalcedo.edumanager.entity.institution;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.id.enhanced.SequenceStyleGenerator;
-import org.springframework.security.core.userdetails.UserDetails;
+import ph.jsalcedo.edumanager.entity.appuser.AppUser;
 import ph.jsalcedo.edumanager.entity.school.School;
 
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.function.ToDoubleBiFunction;
 
 /**
  * <h1> Institution Entity</h1>
@@ -51,6 +51,10 @@ public class Institution {
 
     private String institutionName;
 
+    @OneToOne(mappedBy = "institution")
+    @JsonManagedReference
+    private AppUser appUser;
+
     @JsonManagedReference
     @OneToMany
             (mappedBy = "institution"
@@ -67,6 +71,16 @@ public class Institution {
                 ", institutionName='" + institutionName + '\'' +
                 ", schools=" + schools +
                 '}';
+    }
+
+    @JsonIgnore
+    public List<School> getSchools() {
+        return schools;
+    }
+
+    @JsonIgnore
+    public void setSchools(List<School> schools) {
+        this.schools = schools;
     }
 
     //TODO add a One-To-One Relationship with AppUser

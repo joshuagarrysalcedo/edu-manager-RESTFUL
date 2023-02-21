@@ -2,16 +2,16 @@ package ph.jsalcedo.edumanager.utils.models.person;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.Objects;
 
 @Embeddable
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Name {
     @Column(name = "first_name")
     private String firstName;
@@ -24,4 +24,19 @@ public class Name {
 
     public Name() {
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s. %s", getFirstName(), getMiddleName().charAt(0), getLastName());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Name name = (Name) o;
+        return firstName.equalsIgnoreCase(name.firstName) && middleName.equalsIgnoreCase(name.middleName) && lastName.equalsIgnoreCase(name.lastName);
+    }
+
+
 }

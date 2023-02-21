@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ph.jsalcedo.edumanager.entity.appuser.AppUserRepository;
 import ph.jsalcedo.edumanager.entity.school.schooldetails.SchoolDetailsService;
 import ph.jsalcedo.edumanager.entity.school.schooldetails.SchoolDetailsRepository;
 import ph.jsalcedo.edumanager.utils.models.enums.ErrorMessage;
@@ -24,8 +25,10 @@ class SchoolDetailsServiceImplTest {
     private final SchoolDetailsService schoolDetailsService;
     private final SchoolDetailsRepository schoolDetailsRepository;
     private SchoolDetails schoolDetails;
+    private final AppUserRepository appUserRepository;
     @BeforeEach
     void initialize(){
+        appUserRepository.deleteAll();
         this.schoolDetails = SchoolDetails.builder()
                 .schoolDomain("sample-school.com")
                 .foundedOn(new Date())
@@ -40,11 +43,12 @@ class SchoolDetailsServiceImplTest {
         schoolDetailsService.deleteAll();
     }
     @Autowired
-    public SchoolDetailsServiceImplTest(SchoolDetailsService schoolDetailsService, SchoolDetailsRepository schoolDetailsRepository) {
+    public SchoolDetailsServiceImplTest(SchoolDetailsService schoolDetailsService, SchoolDetailsRepository schoolDetailsRepository, AppUserRepository appUserRepository) {
         this.schoolDetailsService = schoolDetailsService;
         this.schoolDetailsRepository = schoolDetailsRepository;
 
 
+        this.appUserRepository = appUserRepository;
     }
 
 

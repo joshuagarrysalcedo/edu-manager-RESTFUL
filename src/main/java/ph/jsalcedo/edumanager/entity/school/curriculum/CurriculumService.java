@@ -2,6 +2,7 @@ package ph.jsalcedo.edumanager.entity.school.curriculum;
 
 import org.springframework.transaction.annotation.Transactional;
 import ph.jsalcedo.edumanager.entity.school.School;
+import ph.jsalcedo.edumanager.entity.student.Student;
 
 import java.util.List;
 
@@ -33,4 +34,10 @@ public interface CurriculumService {
     void deleteCurriculumByID(Long id);
 
     Curriculum findByID(Long l);
+
+
+    @Transactional
+    Curriculum addStudent(Long ID, Student student);
+    @Transactional
+    Curriculum removeStudent(Long ID, Student student);
 }

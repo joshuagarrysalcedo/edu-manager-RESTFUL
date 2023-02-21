@@ -3,8 +3,14 @@ package ph.jsalcedo.edumanager.entity.school.curriculum;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ph.jsalcedo.edumanager.entity.school.School;
+import ph.jsalcedo.edumanager.entity.student.Student;
+import ph.jsalcedo.edumanager.entity.student.StudentRepository;
+import ph.jsalcedo.edumanager.entity.student.StudentService;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomEntityNotFoundException;
+import ph.jsalcedo.edumanager.exceptions.exception.DuplicateNameException;
+import ph.jsalcedo.edumanager.exceptions.exception.EntityNotOwnedException;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +33,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CurriculumServiceImpl implements CurriculumService{
     private final CurriculumRepository curriculumRepository;
+    private final StudentService studentService;
+    private final StudentRepository studentRepository;
 
     /**
      * <h1>findAllCurriculumBySchool</h1>
@@ -107,5 +115,75 @@ public class CurriculumServiceImpl implements CurriculumService{
         if(optionalCurriculum.isEmpty())
             throw new CustomEntityNotFoundException("Curriculum ID ", l);
         return optionalCurriculum.get();
+    }
+
+    /**
+     * <h1>addStudent</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param ID
+     * @param student
+     * @return
+     * @author Joshua Salcedo
+     * @created 22/02/2023 - 12:12 am
+     */
+    @Override
+    public Curriculum addStudent(Long ID, Student student) {
+        Curriculum curriculum = findByID(ID);
+        List<Student> studentList = studentService.findAllStudentsByCurriculum(curriculum);
+
+        Student finalStudent = student;
+        studentList.forEach(s-> {
+
+            //Only add student if both curriculum and student have the same school
+            if(!curriculum.getSchool().getId().equals(finalStudent.getSchool().getId())){
+                throw new EntityNotOwnedException(curriculum.getSchool().getSchoolName(), finalStudent.getName().toString(), "Student ID", finalStudent.getId());
+            }
+            //Dont add duplicate Student!
+            if(s.getId().equals(finalStudent.getId())){
+                throw new DuplicateNameException(finalStudent.getName().toString());
+            }
+        });
+
+        Optional<Student> optionalStudent = studentRepository.findById(student.getId());
+        if(optionalStudent.isPresent()){
+            optionalStudent.get().setCurriculum(curriculum);
+            curriculum.getStudentList().add(optionalStudent.get());
+            return curriculumRepository.saveAndFlush(curriculum);
+        }
+
+
+
+//        student.setCurriculum(curriculum);
+//        curriculum.getStudentList().add(student);
+//
+//
+//        return curriculumRepository.saveAndFlush(curriculum);
+        return null;
+
+    }
+
+    /**
+     * <h1>removeStudent</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param ID
+     * @param student
+     * @return
+     * @author Joshua Salcedo
+     * @created 22/02/2023 - 12:12 am
+     */
+    @Override
+    public Curriculum removeStudent(Long ID, Student student) {
+        Curriculum curriculum = findByID(ID);
+
+        curriculum.getStudentList().removeIf(e->
+            e.getName().equals(student.getName())
+        );
+        student.setCurriculum(null);
+
+        return curriculumRepository.saveAndFlush(curriculum);
     }
 }

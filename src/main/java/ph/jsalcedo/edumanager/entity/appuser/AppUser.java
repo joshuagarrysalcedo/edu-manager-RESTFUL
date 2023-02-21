@@ -1,10 +1,13 @@
 package ph.jsalcedo.edumanager.entity.appuser;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ph.jsalcedo.edumanager.entity.institution.Institution;
 import ph.jsalcedo.edumanager.utils.models.enums.AppUserRole;
 import ph.jsalcedo.edumanager.utils.models.person.Name;
 
@@ -41,6 +44,20 @@ public class AppUser implements UserDetails {
     private String country;
     private Boolean locked;
     private Boolean enabled;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "institution_id", referencedColumnName = "id")
+
+    private Institution institution;
+    @JsonIgnore
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @JsonIgnore
+    public void setInstitution(Institution institution) {
+        this.institution = institution;
+    }
 
     public AppUser(Name name, String email, String password, AppUserRole appUserRole, String companyName, String country, Boolean locked, Boolean enabled) {
         this.name = name;

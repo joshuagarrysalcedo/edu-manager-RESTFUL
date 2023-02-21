@@ -27,7 +27,10 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/index", "/index**", "", "/", "/api/v1/auth/register", "/api/v1/auth/authenticate", "/api/v1/auth/users", "/login", "/api/v1/auth/**", "/api/v1/auth/user/**", "/api/v1/auth/user/")
+                .requestMatchers("/index", "/index**", "", "/", "/api/v1/auth/register",
+                        "/api/v1/auth/authenticate", "/api/v1/auth/users", "/login", "/api/v1/auth/**", "/api/v1/auth/user/**", "/api/v1/auth/user/",
+                        "/api/v1/school-admin", "/api/v1/school-admin/**", "/api/v1/school-admin/**/schools", "/api/v1/school-admin//**/**/**/**")
+//                .requestMatchers("/", "/index")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -42,13 +45,13 @@ public class SecurityConfiguration {
                         {
                             try {
                                 form
-                                        .permitAll()
-                                        .loginPage("http://localhost:3000/")
-                                        .loginProcessingUrl("/perform_login")
-                                        .defaultSuccessUrl("/index", true)
-                                        .failureHandler(authenticationFailureHandler())
-                                        .and()
-                                        .logout();
+                                        .permitAll();
+//                                        .loginPage("http://localhost:3000/")
+//                                        .loginProcessingUrl("/perform_login")
+//                                        .defaultSuccessUrl("/index", true)
+//                                        .failureHandler(authenticationFailureHandler())
+//                                        .and()
+//                                        .logout();
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }

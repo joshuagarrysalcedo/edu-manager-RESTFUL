@@ -12,6 +12,7 @@ import ph.jsalcedo.edumanager.configuration.JwtService;
 import ph.jsalcedo.edumanager.entity.appuser.AppUser;
 import ph.jsalcedo.edumanager.entity.appuser.AppUserRepository;
 import ph.jsalcedo.edumanager.entity.appuser.AppUserServiceImpl;
+import ph.jsalcedo.edumanager.entity.institution.Institution;
 import ph.jsalcedo.edumanager.utils.models.person.Name;
 
 @Service
@@ -33,6 +34,9 @@ public class AuthenticationService {
                 .country(request.getCountry())
                 .companyName(request.getCompanyName())
                 .appUserRole(request.getAppUserRole())
+                .institution(Institution.builder()
+                        .institutionName(request.getCompanyName())
+                        .build())
                 .enabled(true)
                 .locked(false)
                 .build();

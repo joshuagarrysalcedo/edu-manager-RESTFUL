@@ -1,12 +1,19 @@
 package ph.jsalcedo.edumanager.entity.school.curriculum;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
 import ph.jsalcedo.edumanager.entity.school.School;
+import ph.jsalcedo.edumanager.entity.student.Student;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <h1> Curriculum</h1>
@@ -48,11 +55,31 @@ public class Curriculum {
 
     private String curriculumName;
 
+
     @ManyToOne(targetEntity = School.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "school_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private School school;
+
+
+
+    @OneToMany(
+            mappedBy = "curriculum",
+            targetEntity = Student.class,
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    private List<Student> studentList = new ArrayList<>();
+    @JsonIgnore
+    public List<Student> getStudentList() {
+        return studentList;
+    }
+
+    @JsonIgnore
+    public void setStudentList(List<Student> studentList) {
+        this.studentList = studentList;
+    }
 
     @Override
     public String toString() {
@@ -60,6 +87,8 @@ public class Curriculum {
                 "id=" + id +
                 ", curriculumName='" + curriculumName + '\'' +
                 ", school=" + (school.getSchoolName() == null ? "NULL" : school.getSchoolName()) +
+                ", enrolled students= " + (studentList == null ? "NULL" : studentList.size()) +
+                ", Students = " + studentList +
                 '}';
     }
 }

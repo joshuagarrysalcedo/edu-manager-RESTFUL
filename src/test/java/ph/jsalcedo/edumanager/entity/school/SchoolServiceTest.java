@@ -11,10 +11,8 @@ import ph.jsalcedo.edumanager.entity.institution.InstitutionService;
 import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
 import ph.jsalcedo.edumanager.entity.school.curriculum.CurriculumService;
 import ph.jsalcedo.edumanager.exceptions.ExceptionMessage;
-import ph.jsalcedo.edumanager.exceptions.exception.CustomEntityNotFoundException;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
 import ph.jsalcedo.edumanager.exceptions.exception.DuplicateNameException;
-import ph.jsalcedo.edumanager.exceptions.exception.EntityNotOwnedException;
 
 import java.util.Optional;
 
@@ -87,7 +85,7 @@ class SchoolServiceTest {
 
            System.out.println("ID : " + school.getId());
            school.setSchoolName(newDuplicateName);
-           schoolService.updateSchool(school);
+           schoolService.updateCurriculum(school);
         });
     }
 
@@ -108,7 +106,7 @@ class SchoolServiceTest {
         System.out.println("OLD SCHOOL NAME : " + oldName);
         schoolOptional.get().setSchoolName(newName);
         System.out.println("NEW SCHOOL NAME: " + schoolOptional.get().getSchoolName());
-        schoolService.updateSchool(schoolOptional.get());
+        schoolService.updateCurriculum(schoolOptional.get());
 
         Assertions.assertFalse(schoolRepository.existsBySchoolNameAndAndInstitution(oldName, schoolOptional.get().getInstitution()));
     }
@@ -129,7 +127,7 @@ class SchoolServiceTest {
         schoolOptional.get().setSchoolName(name);
         Exception exception = Assertions.assertThrows(CustomInvalidNameException.class, ()->{
             System.out.println("Expected : \n" + expected);
-            schoolService.updateSchool(schoolOptional.get());
+            schoolService.updateCurriculum(schoolOptional.get());
         });
 
 

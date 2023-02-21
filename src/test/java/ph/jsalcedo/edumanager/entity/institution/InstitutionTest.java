@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ph.jsalcedo.edumanager.entity.appuser.AppUserRepository;
 import ph.jsalcedo.edumanager.entity.school.School;
 import ph.jsalcedo.edumanager.entity.school.SchoolRepository;
 import ph.jsalcedo.edumanager.entity.school.SchoolService;
@@ -16,7 +17,6 @@ import ph.jsalcedo.edumanager.exceptions.exception.CustomEntityNotFoundException
 import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
 import ph.jsalcedo.edumanager.exceptions.exception.DuplicateNameException;
 import ph.jsalcedo.edumanager.exceptions.ExceptionMessage;
-import ph.jsalcedo.edumanager.exceptions.exception.InstitutionNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,17 +30,19 @@ class InstitutionTest {
     private final SchoolRepository schoolRepository;
     private final SchoolService schoolService;
     private Institution institution;
+    private final AppUserRepository appUserRepository;
     @Autowired
-    public InstitutionTest(InstitutionService institutionService, InstitutionRepository institutionRepository, SchoolRepository schoolRepository, SchoolService schoolService) {
+    public InstitutionTest(InstitutionService institutionService, InstitutionRepository institutionRepository, SchoolRepository schoolRepository, SchoolService schoolService, AppUserRepository appUserRepository) {
         this.institutionService = institutionService;
         this.institutionRepository = institutionRepository;
         this.schoolRepository = schoolRepository;
         this.schoolService = schoolService;
+        this.appUserRepository = appUserRepository;
     }
 
     @BeforeEach()
     void initialize(){
-
+        appUserRepository.deleteAll();
       this.institution = Institution.builder().institutionName("InstitutionTest").build();
         institutionService.create(institution);
 

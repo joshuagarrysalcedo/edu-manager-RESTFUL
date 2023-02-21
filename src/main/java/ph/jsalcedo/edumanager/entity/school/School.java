@@ -3,6 +3,7 @@
 package ph.jsalcedo.edumanager.entity.school;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
 import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
+import ph.jsalcedo.edumanager.entity.student.Student;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,13 +64,40 @@ public class School {
                     , orphanRemoval = true)
     private List<Curriculum> curriculum = new ArrayList<>();
 
+    @JsonManagedReference
+    @OneToMany(
+            mappedBy = "school",
+            targetEntity = Student.class,
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Student> students = new ArrayList<>();
+
     @Override
     public String toString() {
         return "School{" +
                 "id=" + id +
                 ", institution=" + (institution.getInstitutionName() == null ? "NULL": institution.getInstitutionName())  +
                 ", schoolName='" + schoolName + '\'' +
-                ", curriculum=" + curriculum +
+                ", curriculum=" + (curriculum == null ? "NULL" : curriculum) +
                 '}';
+    }
+
+    @JsonIgnore
+    public Institution getInstitution() {
+        return institution;
+    }
+
+    @JsonIgnore
+    public List<Student> getStudents() {
+        return students;
+    }
+    @JsonIgnore
+    public void setCurriculum(List<Curriculum> curriculum) {
+        this.curriculum = curriculum;
+    }
+    @JsonIgnore
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 }

@@ -10,6 +10,8 @@ import ph.jsalcedo.edumanager.entity.institution.Institution;
 import ph.jsalcedo.edumanager.entity.institution.InstitutionRepository;
 import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
 import ph.jsalcedo.edumanager.entity.school.curriculum.CurriculumService;
+import ph.jsalcedo.edumanager.entity.student.Student;
+import ph.jsalcedo.edumanager.entity.student.StudentService;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomEntityNotFoundException;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
 import ph.jsalcedo.edumanager.exceptions.exception.DuplicateNameException;
@@ -40,7 +42,7 @@ public class SchoolServiceImpl implements SchoolService{
     private final CurriculumService curriculumService;
     private final InstitutionRepository institutionRepository;
 
-
+    private final StudentService studentService;
 
 
 
@@ -60,7 +62,7 @@ public class SchoolServiceImpl implements SchoolService{
      * @created 16/02/2023 - 2:58 pm
      */
     @Override
-    public void  updateSchool(School school) {
+    public void updateCurriculum(School school) {
         List<School> schoolList = schoolRepository.findAllByInstitution(school.getInstitution());
 
         for(School s : schoolList){
@@ -302,6 +304,112 @@ public class SchoolServiceImpl implements SchoolService{
 
 
     }
+
+    /**
+     * <h1>updateCurriculum</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param schoolID
+     * @param curriculum
+     * @return
+     * @author Joshua Salcedo
+     * @created 22/02/2023 - 1:04 am
+     */
+    @Override
+    public School updateCurriculum(Long schoolID, Curriculum curriculum) {
+       School school = deleteCurriculum(schoolID, curriculum);
+       school = addCurriculum(schoolID, curriculum);
+
+       return schoolRepository.saveAndFlush(school);
+    }
+
+    /**
+     * <h1>updateSchool</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param schoolID
+     * @param curriculum
+     * @return
+     * @author Joshua Salcedo
+     * @created 22/02/2023 - 12:58 am
+     */
+
+
+    /**
+     * <h1>addStudent</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param schoolID
+     * @param student
+     * @return
+     * @author Joshua Salcedo
+     * @created 21/02/2023 - 11:36 pm
+     */
+    @Override
+    public School addStudent(Long schoolID, Student student) {
+        School school = findSchoolByID(schoolID);
+
+        List<Student> studentList = studentService.findAllStudentsBySchool(school);
+
+        studentList.forEach(e->{
+            if(e.getName().equals(student.getName())){
+                throw new DuplicateNameException(student.getName().toString());
+            }
+        });
+
+        student.setSchool(school);
+        school.getStudents().add(student);
+        return schoolRepository.saveAndFlush(school);
+    }
+
+
+
+
+    /**
+     * <h1>deleteStudent</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param schoolID
+     * @param student
+     * @return
+     * @author Joshua Salcedo
+     * @created 21/02/2023 - 11:36 pm
+     */
+    @Override
+    public School deleteStudent(Long schoolID, Student student) {
+        School school = getSchool(schoolID);
+        student.setSchool(null);
+        school.getStudents().removeIf((e->
+                e.getName().equals(student.getName())
+                ));
+
+
+        return schoolRepository.saveAndFlush(school);
+    }
+
+    /**
+     * <h1>findSchoolByInstitutionAndSchoolName</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param institution
+     * @param schoolName
+     * @return
+     * @author Joshua Salcedo
+     * @created 22/02/2023 - 5:50 am
+     */
+    @Override
+    public School findSchoolByInstitutionAndSchoolName(Institution institution, String schoolName) {
+        Optional<School> optionalSchool =  schoolRepository.findByInstitutionAndSchoolName(institution, schoolName);
+        if(optionalSchool.isEmpty())
+            throw new EntityNotOwnedException(institution.getInstitutionName(), "School", "School Name", schoolName);
+        return optionalSchool.get();
+    }
+
 
     public School getSchool(Long schoolID) {
         Optional<School> optionalSchool = schoolRepository.findById(schoolID);

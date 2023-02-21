@@ -3,6 +3,7 @@ package ph.jsalcedo.edumanager.entity.school;
 import com.github.javafaker.Faker;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,18 +11,22 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ph.jsalcedo.edumanager.entity.appuser.AppUserRepository;
 import ph.jsalcedo.edumanager.entity.institution.Institution;
 import ph.jsalcedo.edumanager.entity.institution.InstitutionRepository;
 import ph.jsalcedo.edumanager.entity.institution.InstitutionService;
 import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
 import ph.jsalcedo.edumanager.entity.school.curriculum.CurriculumRepository;
 import ph.jsalcedo.edumanager.entity.school.curriculum.CurriculumService;
+import ph.jsalcedo.edumanager.entity.student.Student;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
 import ph.jsalcedo.edumanager.exceptions.exception.DuplicateNameException;
+import ph.jsalcedo.edumanager.utils.models.person.Name;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * <h1> SchoolServiceRepositoryTest</h1>
@@ -50,9 +55,10 @@ public class SchoolServiceRepositoryTest {
     private final Faker faker;
     private final CurriculumRepository curriculumRepository;
     private final CurriculumService curriculumService;
+    private final AppUserRepository appUserRepository;
 
     @Autowired
-    public SchoolServiceRepositoryTest(SchoolService schoolService, InstitutionService institutionService, InstitutionRepository institutionRepository, SchoolRepository schoolRepository, Faker faker, CurriculumRepository curriculumRepository, CurriculumService curriculumService) {
+    public SchoolServiceRepositoryTest(SchoolService schoolService, InstitutionService institutionService, InstitutionRepository institutionRepository, SchoolRepository schoolRepository, Faker faker, CurriculumRepository curriculumRepository, CurriculumService curriculumService, AppUserRepository appUserRepository) {
         this.schoolService = schoolService;
         this.institutionService = institutionService;
         this.institutionRepository = institutionRepository;
@@ -60,6 +66,12 @@ public class SchoolServiceRepositoryTest {
         this.faker = faker;
         this.curriculumRepository = curriculumRepository;
         this.curriculumService = curriculumService;
+        this.appUserRepository = appUserRepository;
+    }
+
+    @BeforeEach
+    void initialize(){
+        appUserRepository.deleteAll();
     }
 
     @Test
@@ -242,6 +254,183 @@ public class SchoolServiceRepositoryTest {
 
 
 
+
+    @Test
+    void shouldBeAbleToAddStudent(){
+        System.out.println("<-----------------Start of Test----------------------->");
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        Institution institution = Institution.builder()
+                .institutionName(faker.university().name())
+                .build();
+        institution = institutionService.create(institution);
+
+        Assertions.assertThat(institution.getSchools()).isNull();
+        School school = School.builder().schoolName(faker.university().name()).build();
+        institution = institutionService.addSchool(institution.getId(), school);
+
+        System.out.println("Institution after Adding School : ");
+        System.out.println("Institution After Saving: ");
+        System.out.println(institution.getSchools());
+        printLoading();
+        Assertions.assertThat(institution.getSchools()).isNotNull();
+        String[] curriculumNames = {
+                "Philosophy of Physics",
+                "Electrical Engineering",
+                "Aesthetics",
+                "Philosophy of Action",
+                "Financial Economics"
+        };
+
+        school = schoolService.findSchoolByInstitutionAndName(institution, school.getSchoolName());
+
+        for(int i = 0; i < curriculumNames.length; i++){
+            Curriculum curriculum = Curriculum.builder().curriculumName(curriculumNames[i]).build();
+            school = schoolService.addCurriculum(schoolService.findSchoolByInstitutionAndName(institution, school.getSchoolName()).getId(), curriculum);
+        }
+
+
+        System.out.println("School after Adding curriculum");
+        System.out.println("School : " + school.getSchoolName());
+        System.out.println(school.getCurriculum());
+
+
+        System.out.println("Adding students");
+        for(int i = 0; i < 100; i++){
+            Student student = Student.builder().name(
+                    Name.builder()
+                            .firstName(faker.name().firstName())
+                            .middleName(faker.name().lastName())
+                            .lastName(faker.name().lastName())
+                            .build()
+            ).build();
+            school = schoolService.addStudent(school.getId(), student);
+        }
+        System.out.println("Should have 100 students!");
+        System.out.println("Quantity: " + school.getStudents().size());
+        school.getStudents().forEach(e->{
+            System.out.println(e.getName());
+        });
+        Assertions.assertThat(school.getStudents().size()).isEqualTo(100);
+
+        school = schoolService.deleteStudent(school.getId(), school.getStudents().get(0));
+        System.out.println("Should have 99 students");
+        System.out.println("Quantity: " + school.getStudents().size());
+        Assertions.assertThat(school.getStudents().size()).isEqualTo(99);
+
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println("<----------------- End  of Test----------------------->");
+
+    }
+
+    @Test
+    void shouldBeAbleToAddCurriculum(){
+        Random random = new Random();
+        System.out.println("<-----------------Start of Test----------------------->");
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        Institution institution = Institution.builder()
+                .institutionName(faker.university().name())
+                .build();
+        institution = institutionService.create(institution);
+
+        Assertions.assertThat(institution.getSchools()).isNull();
+        School school = School.builder().schoolName(faker.university().name()).build();
+        institution = institutionService.addSchool(institution.getId(), school);
+
+        System.out.println("Institution after Adding School : ");
+        System.out.println("Institution After Saving: ");
+        System.out.println(institution.getSchools());
+        printLoading();
+        Assertions.assertThat(institution.getSchools()).isNotNull();
+
+
+        school = schoolService.findSchoolByInstitutionAndName(institution, school.getSchoolName());
+        String[] curriculumNames = {
+                "Philosophy of Physics",
+                "Electrical Engineering",
+                "Aesthetics",
+                "Philosophy of Action",
+                "Financial Economics"
+        };
+        for(int i = 0; i < curriculumNames.length; i++){
+            Curriculum curriculum = Curriculum.builder().curriculumName(curriculumNames[i]).build();
+            school = schoolService.addCurriculum(schoolService.findSchoolByInstitutionAndName(institution, school.getSchoolName()).getId(), curriculum);
+        }
+
+
+        System.out.println("School after Adding curriculum");
+        System.out.println("School : " + school.getSchoolName());
+        System.out.println(school.getCurriculum());
+
+
+        System.out.println("Adding students");
+        for(int i = 0; i < 100; i++){
+            Student student = Student.builder().name(
+                    Name.builder()
+                            .firstName(faker.name().firstName())
+                            .middleName(faker.name().lastName())
+                            .lastName(faker.name().lastName())
+                            .build()
+            ).build();
+//            school.getCurriculum().get(0) = curriculumService.addStudent(school.getCurriculum().get(0).getId(), student);
+            school = schoolService.addStudent(school.getId(), student);
+        }
+        System.out.println("Should have 100 students!");
+        System.out.println("Quantity: " + school.getStudents().size());
+//        school.getStudents().forEach(e->{
+//            System.out.println(e.getName());
+//        });
+        Assertions.assertThat(school.getStudents().size()).isEqualTo(100);
+
+
+        school.getCurriculum().forEach(System.out::println);
+        System.out.println("Adding Curriculum to each student");
+        printLoading();
+        for(int i = 0; i < school.getStudents().size(); i++){
+            int index = random.nextInt(school.getCurriculum().size());
+            Curriculum curriculum = curriculumService.findByID(school.getCurriculum().get(index).getId());
+            curriculum = curriculumService.addStudent(school.getCurriculum().get(index).getId(), school.getStudents().get(i));
+//            school = schoolService.updateCurriculum(school.getId(), curriculum);
+//            System.out.println(curriculum);
+        }
+        school = schoolService.findSchoolByID(school.getId());
+        printLoading();
+        school.getStudents().forEach(System.out::println);
+
+        printLoading();
+        school.getCurriculum().forEach(System.out::println);
+
+
+
+//        int curriculumSize = school.getCurriculum().size();
+//
+//        for(int i = 0; i < school.getStudents().size(); i++){
+//            int index = random.nextInt(curriculumSize);
+//            Curriculum curriculum = curriculumService.findBySchoolAndCurriculumName(school, school.getCurriculum().get(index).getCurriculumName());
+//            Long id = curriculum.getId();
+//
+//            Curriculum temp = curriculumService.addStudent(id, school.getStudents().get(i));
+//            school = schoolService.updateCurriculum(school.getId(), curriculum);
+//        }
+//
+//
+//
+//        System.out.println("Students should have a curriculum");
+//
+
+
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println("<----------------- End  of Test----------------------->");
+    }
 
 
 

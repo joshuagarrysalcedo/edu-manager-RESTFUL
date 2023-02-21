@@ -13,4 +13,8 @@ public interface AppUserService {
     boolean doesEmailExists(String email);
 
     AppUser getAppuser(Long id);
+
+    AppUser findByIdAndInstitutionInstitutionName(Long id, String institution_institutionName);
+
+
 }
