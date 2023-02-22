@@ -1,5 +1,8 @@
 package ph.jsalcedo.edumanager.entity.student;
 
+import ph.jsalcedo.edumanager.entity.auth.AuthenticationResponse;
+import ph.jsalcedo.edumanager.entity.auth.RegisterRequest;
+import ph.jsalcedo.edumanager.entity.registerrequest.RegisterStudentRequest;
 import ph.jsalcedo.edumanager.entity.school.School;
 import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
 import ph.jsalcedo.edumanager.utils.models.person.Name;
@@ -30,4 +33,6 @@ public interface StudentService {
 
 
     List<Student> findAllStudentsByCurriculum(Curriculum curriculum);
+
+    Student registerStudent(RegisterStudentRequest request);
 }

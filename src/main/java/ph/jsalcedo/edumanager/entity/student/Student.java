@@ -65,9 +65,11 @@ public  class Student extends Person {
                 this.curriculum == null ? "Null" : curriculum.getCurriculumName()
                 );
     }
+
     public Curriculum getCurriculum() {
         return curriculum;
     }
+
 
     public void setCurriculum(Curriculum curriculum) {
         this.curriculum = curriculum;

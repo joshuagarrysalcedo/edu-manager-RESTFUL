@@ -15,7 +15,7 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
 
     Optional<School> findFirstByOrderByIdDesc();
 
-    Optional<School> findByInstitutionAndSchoolName(Institution institution, String schoolName);
+    Optional<School> findByInstitutionAndSchoolNameEqualsIgnoreCase(Institution institution, String schoolName);
 
     School findFirstByInstitutionOrderById(Institution institution);
 }

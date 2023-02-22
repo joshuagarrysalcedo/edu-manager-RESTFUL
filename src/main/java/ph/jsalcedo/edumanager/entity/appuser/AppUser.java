@@ -47,7 +47,6 @@ public class AppUser implements UserDetails {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "institution_id", referencedColumnName = "id")
-
     private Institution institution;
     @JsonIgnore
     public Institution getInstitution() {

@@ -11,6 +11,7 @@ import ph.jsalcedo.edumanager.entity.institution.InstitutionRepository;
 import ph.jsalcedo.edumanager.entity.school.curriculum.Curriculum;
 import ph.jsalcedo.edumanager.entity.school.curriculum.CurriculumService;
 import ph.jsalcedo.edumanager.entity.student.Student;
+import ph.jsalcedo.edumanager.entity.student.StudentRepository;
 import ph.jsalcedo.edumanager.entity.student.StudentService;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomEntityNotFoundException;
 import ph.jsalcedo.edumanager.exceptions.exception.CustomInvalidNameException;
@@ -43,6 +44,7 @@ public class SchoolServiceImpl implements SchoolService{
     private final InstitutionRepository institutionRepository;
 
     private final StudentService studentService;
+    private final StudentRepository studentRepository;
 
 
 
@@ -126,7 +128,7 @@ public class SchoolServiceImpl implements SchoolService{
     @Override
     public School findSchoolByInstitutionAndName(Institution institution, String name) {
 
-        Optional<School> schoolOptional = schoolRepository.findByInstitutionAndSchoolName(institution,name);
+        Optional<School> schoolOptional = schoolRepository.findByInstitutionAndSchoolNameEqualsIgnoreCase(institution,name);
         if(schoolOptional.isEmpty())
             throw new EntityNotFoundException("NOT FOUND");
         return schoolOptional.get();
@@ -294,9 +296,17 @@ public class SchoolServiceImpl implements SchoolService{
         if(!isFound.get())
             throw new EntityNotOwnedException("School", "Curriculum", "ID",curriculum.getId());
 
-        school.getCurriculum().removeIf(e->
-            e.getCurriculumName().equalsIgnoreCase(curriculum.getCurriculumName()));
+
+        curriculum.getStudentList().forEach(e->{
+            e.setCurriculum(null);
+        });
         curriculum.setSchool(null);
+
+        school.getCurriculum().removeIf(e->
+                e.getCurriculumName().equalsIgnoreCase(curriculum.getCurriculumName()));
+//        curriculumService.deleteCurriculumByID(curriculum.getId());
+
+
 
 
 
@@ -404,7 +414,7 @@ public class SchoolServiceImpl implements SchoolService{
      */
     @Override
     public School findSchoolByInstitutionAndSchoolName(Institution institution, String schoolName) {
-        Optional<School> optionalSchool =  schoolRepository.findByInstitutionAndSchoolName(institution, schoolName);
+        Optional<School> optionalSchool =  schoolRepository.findByInstitutionAndSchoolNameEqualsIgnoreCase(institution, schoolName);
         if(optionalSchool.isEmpty())
             throw new EntityNotOwnedException(institution.getInstitutionName(), "School", "School Name", schoolName);
         return optionalSchool.get();

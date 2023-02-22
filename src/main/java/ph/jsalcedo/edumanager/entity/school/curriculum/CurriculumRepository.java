@@ -40,7 +40,9 @@ public interface CurriculumRepository extends JpaRepository<Curriculum, Long> {
         List<Curriculum> findAllBySchool(School school);
 
         @Modifying
-        @Query("delete from Curriculum c where  c.id =?1")
+
         void deleteCurriculumById( Long Id);
         Optional<Curriculum> findCurriculumBySchoolAndCurriculumName(School school, String curriculumName);
+
+
 }

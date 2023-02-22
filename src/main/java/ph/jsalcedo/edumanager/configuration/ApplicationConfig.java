@@ -190,6 +190,7 @@ public class ApplicationConfig {
             System.out.println("AppUserID : " + appUser.getId());
             System.out.println("Institution Name : " + appUser.getInstitution().getInstitutionName());
             System.out.println("School name : " + school.getSchoolName());
+            System.out.println("School ID: " + school.getId());
         };
 
 

@@ -52,7 +52,6 @@ public class Institution {
     private String institutionName;
 
     @OneToOne(mappedBy = "institution")
-    @JsonManagedReference
     private AppUser appUser;
 
     @JsonManagedReference
@@ -71,6 +70,16 @@ public class Institution {
                 ", institutionName='" + institutionName + '\'' +
                 ", schools=" + schools +
                 '}';
+    }
+
+    @JsonIgnore
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    @JsonIgnore
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 
     @JsonIgnore

@@ -7,6 +7,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import ph.jsalcedo.edumanager.entity.student.Student;
 
 import java.security.Key;
 import java.util.Date;
@@ -20,6 +21,20 @@ public class JwtService {
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+
+//    public String generateToken(Student student){
+//        return generateToken(new HashMap<>(), student);
+//    }
+//    public String generateToken(Map<String, Object> extraClaims, Student student){
+//        return Jwts
+//                .builder()
+//                .setClaims(extraClaims)
+//                .setSubject(student.getName().toString())
+//                .setIssuedAt(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 24))
+//                .signWith(getSigninKey(), SignatureAlgorithm.HS256)
+//                .compact();
+//    }
 
     public String generateToken(UserDetails userDetails){
         return generateToken(new HashMap<>(), userDetails);
@@ -37,6 +52,12 @@ public class JwtService {
                 .signWith(getSigninKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
+//    public boolean isTokenValid(String token, Student student){
+//        final String name = extractUserName(token);
+//        return(name.equals(student.getName().toString()) && !isTokenExpired(token));
+//    }
+
 
     public boolean isTokenValid(String token, UserDetails userDetails){
         final String username = extractUserName(token);

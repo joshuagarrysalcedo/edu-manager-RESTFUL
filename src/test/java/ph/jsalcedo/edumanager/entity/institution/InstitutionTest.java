@@ -223,7 +223,7 @@ class InstitutionTest {
         institutionService.deleteSchool(optionalInstitution.get().getId(), school);
         int newLength = schoolRepository.findAllByInstitution(optionalInstitution.get()).size();
         System.out.println("New Length :" + newLength);
-        Optional<School> deletedSchool = schoolRepository.findByInstitutionAndSchoolName(optionalInstitution.get(), deletedSchoolName);
+        Optional<School> deletedSchool = schoolRepository.findByInstitutionAndSchoolNameEqualsIgnoreCase(optionalInstitution.get(), deletedSchoolName);
         Assertions.assertTrue(deletedSchool.isEmpty());
 
          Assertions.assertNotEquals(originalSize, newLength);

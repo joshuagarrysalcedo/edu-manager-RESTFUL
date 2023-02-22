@@ -2,6 +2,8 @@ package ph.jsalcedo.edumanager.entity.school.curriculum;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ph.jsalcedo.edumanager.entity.registerrequest.EnrollCourseRequest;
+import ph.jsalcedo.edumanager.entity.registerrequest.RegisterCurriculumRequest;
 import ph.jsalcedo.edumanager.entity.school.School;
 import ph.jsalcedo.edumanager.entity.student.Student;
 import ph.jsalcedo.edumanager.entity.student.StudentRepository;
@@ -151,6 +153,8 @@ public class CurriculumServiceImpl implements CurriculumService{
             optionalStudent.get().setCurriculum(curriculum);
             curriculum.getStudentList().add(optionalStudent.get());
             return curriculumRepository.saveAndFlush(curriculum);
+        }else{
+            throw new CustomEntityNotFoundException("Student ID", student.getId());
         }
 
 
@@ -160,7 +164,7 @@ public class CurriculumServiceImpl implements CurriculumService{
 //
 //
 //        return curriculumRepository.saveAndFlush(curriculum);
-        return null;
+
 
     }
 
@@ -185,5 +189,38 @@ public class CurriculumServiceImpl implements CurriculumService{
         student.setCurriculum(null);
 
         return curriculumRepository.saveAndFlush(curriculum);
+    }
+
+    /**
+     * <h1>registerCurriculum</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param request
+     * @return
+     * @author Joshua Salcedo
+     * @created 22/02/2023 - 10:35 am
+     */
+    @Override
+    public Curriculum registerCurriculum(RegisterCurriculumRequest request) {
+        return Curriculum.builder()
+                .curriculumName(request.getCurriculumName())
+                .build();
+    }
+
+    /**
+     * <h1>enrollStudent</h1>
+     * <p>Explain here!</p>
+     * <b>Note:</b>
+     *
+     * @param enrollCourseRequest
+     * @return
+     * @author Joshua Salcedo
+     * @created 22/02/2023 - 11:10 am
+     */
+    @Override
+    public Curriculum enrollStudent(EnrollCourseRequest enrollCourseRequest) {
+        Student student = studentService.findByStudentID(enrollCourseRequest.getStudentID());
+       return  addStudent(enrollCourseRequest.getCurriculumID(), student);
     }
 }

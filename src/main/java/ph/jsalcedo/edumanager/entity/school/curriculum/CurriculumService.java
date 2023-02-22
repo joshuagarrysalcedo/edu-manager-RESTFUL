@@ -1,6 +1,8 @@
 package ph.jsalcedo.edumanager.entity.school.curriculum;
 
 import org.springframework.transaction.annotation.Transactional;
+import ph.jsalcedo.edumanager.entity.registerrequest.EnrollCourseRequest;
+import ph.jsalcedo.edumanager.entity.registerrequest.RegisterCurriculumRequest;
 import ph.jsalcedo.edumanager.entity.school.School;
 import ph.jsalcedo.edumanager.entity.student.Student;
 
@@ -40,4 +42,11 @@ public interface CurriculumService {
     Curriculum addStudent(Long ID, Student student);
     @Transactional
     Curriculum removeStudent(Long ID, Student student);
+
+    @Transactional
+
+    Curriculum registerCurriculum(RegisterCurriculumRequest request);
+
+    @Transactional
+    Curriculum enrollStudent(EnrollCourseRequest enrollCourseRequest);
 }

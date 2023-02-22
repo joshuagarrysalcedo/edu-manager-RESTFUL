@@ -29,7 +29,12 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/index", "/index**", "", "/", "/api/v1/auth/register",
                         "/api/v1/auth/authenticate", "/api/v1/auth/users", "/login", "/api/v1/auth/**", "/api/v1/auth/user/**", "/api/v1/auth/user/",
-                        "/api/v1/school-admin", "/api/v1/school-admin/**", "/api/v1/school-admin/**/schools", "/api/v1/school-admin//**/**/**/**")
+                        "/api/v1/school-admin", "/api/v1/school-admin/*", "/api/v1/school-admin/*/schools", "/api/v1/school-admin/*/*/*/curriculums",
+                        "/api/v1/school-admin/*/*/*/curriculum",
+                        "/api/v1/school-admin/*/*/*/students",
+                        "/api/v1/school-admin/*/*/*/student",
+                        "/api/v1/school-admin/*/*/*/*/enroll",
+                        "/api/v1/school-admin/*/*/*/curriculums/delete")
 //                .requestMatchers("/", "/index")
                 .permitAll()
                 .anyRequest()

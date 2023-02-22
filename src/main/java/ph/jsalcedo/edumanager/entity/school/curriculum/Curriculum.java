@@ -57,7 +57,7 @@ public class Curriculum {
 
 
     @ManyToOne(targetEntity = School.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "school_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "school_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
     private School school;
